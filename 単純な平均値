@@ -1,0 +1,4 @@
+dem mean(data):
+  return sum(data) / len(data) #サムでリストの合計を求めてLENで割ってる。
+  
+#ただ、標準ライブラリのstatisticsにも平均を求めるライブラリがある

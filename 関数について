@@ -44,3 +44,17 @@ func(10, 20, 30)  # 10 20 30
 func(10, 20)  # 10 20 3   ←arg3のデフォルト値が反映される
 func(arg1=10)  # 10 2 3   ←arg1だけを指定して関数を実行している
 func(10, arg3=30)  # 10 2 30  ←arg3を指定して関数を実行している
+
+🔵任意の個数の引数
+引数に*をつけることで任意個数の引数を関数へ入力できる
+
+def func(*args):
+    print(args) ＃('hello', 'world')  ← タプルで受け取るためそのまま出力すると丸カッコつきの表記になる
+    for arg in args:
+        print(arg, end=' ')  # Hello world ← タプルとして表示させないためにforループを利用して表示している。
+        
+    print()
+
+
+func('hello', 'world')
+

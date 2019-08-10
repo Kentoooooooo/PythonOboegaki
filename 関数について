@@ -58,3 +58,12 @@ def func(*args):
 
 func('hello', 'world')
 
+🔵任意個数のキーワード引数とアンパック
+*や**を出力の際につけると中身をすべて表示してくれる。sepオプションをつけなければ間に' 'が入る
+これをアンパックっていうらしい
+
+def func(*args, **kwargs):
+    print(*args, **kwargs)
+
+
+func(1, 2, 3, sep='-')

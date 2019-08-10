@@ -67,3 +67,8 @@ def func(*args, **kwargs):
 
 
 func(1, 2, 3, sep='-')
+
+🔵lambda式（ラムダ式）
+簡単な処理をするだけならわざわざdefを使って関数を定義しなくてもいいよって機能
+func = lambda a, b: a + b  ← ラムダ 引数 ： 処理
+print(func(1, 2))          ← 実際の関数のように利用できる

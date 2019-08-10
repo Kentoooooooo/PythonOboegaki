@@ -1,1 +1,2 @@
 文字列.rstrip()
+print('文字列', end='')

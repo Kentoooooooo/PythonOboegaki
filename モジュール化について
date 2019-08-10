@@ -1,0 +1,26 @@
+🔵他のpyファイルに記述した関数とかを利用できる
+#### main1.py ######################
+import module1
+
+print('__name__:', __name__)
+result1 = module1.add(1, 2)
+print('module1.add(1, 2):', result1)
+
+# 変数に代入して実行
+add = module1.add
+print('add = module1.add')
+result2 = add(1, 2)
+print('add(1, 2):', result2)
+
+#### module1.py ######################
+
+print('__name__:', __name__)
+
+def add(a, b):
+    return a + b
+#### 実行結果 ######################
+__name__: module1  ← module1の出力。import時点で実行している？
+__name__: __main__  ← main1の出力。実行ファイルの__name__は'__main__'になる
+module1.add(1, 2): 3
+add = module1.add
+add(1, 2): 3

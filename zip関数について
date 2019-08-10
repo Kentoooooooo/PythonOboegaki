@@ -1,0 +1,13 @@
+🔵zip : イテラブルオブジェクトの要素をまとめるための関数
+
+forループの中で複数のイテラブルオブジェクトをまとめて使いたい場合はzip()関数の引数にそれらを指定する
+
+names = ['Alice', 'Bob', 'Charlie', 'Dave']
+ages = [24, 50, 18]
+
+for name, age in zip(names, ages):
+    print(name, age)
+# Alice 24
+# Bob 50
+# Charlie 18  ← 要素数が多い方は無視される
+

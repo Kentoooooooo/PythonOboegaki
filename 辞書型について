@@ -1,0 +1,71 @@
+辞書型には3つのメソッドがある。
+keys(), values(), items()
+
+keys():各要素のキーに対してforループを取得
+values():各要素のvalueに対してforループを取得
+items():各要素のkeyとvalueに対してforループを取得
+
+items()はkeys()とvalues()の複合技！！
+
+辞書オブジェクトの例
+d = {'key1': 1, 'key2': 2, 'key3': 3}
+
+辞書オブジェクトをそのままfor分で回すとkeyが取得される
+for k in d:
+  print(k)
+  #key1
+  #key2
+  #key3
+
+だからkeys()メソッドを使う機会はあまりないかも。。
+for k in d.keys():
+  print(k)
+  #key1
+  #key2
+  #key3  そのままforループを回すときと同じ
+！！keys()メソッドあまり使う機会ないかもって書いたのはウソだった
+keys()メソッドはdict_keysクラスを返す
+⇒これを利用してlist()関数を利用することによりリスト化できる
+keys = d.keys()
+print(keys)
+print(type(keys))
+# dict_keys(['key1', 'key2', 'key3'])
+# <class 'dict_keys'>   ←dict_keyクラスが返ってきている
+
+k_list = list(d.keys())
+print(k_list)
+pritn(type(k_list))
+# ['key1', 'key2', 'key3']
+# <class 'list'>  ← うまくリスト化できている
+
+🔵values()メソッドについて
+各要素の値valueに対してforループを行いたい場合はvalues(）メソッドを
+利用する。
+for v in d.values():
+  print(v)
+# 1
+# 2
+# 3
+
+🔵items()メソッドについて
+各要素のkeyとvalueの両方に対してforループを行いたい場合はitems()メソッドを用いる
+
+for k, v in d.items():
+  print(k, v)
+# key1 1
+# key2 2
+# key3 3
+
+また、items()メソッドを利用することにより
+(key, value)のタプルとして受け取ることもできる
+
+for t in d.items():
+  pritn(t)
+  print(type(t))
+  print(t[0])
+  print(t[1])
+  print('---')
+# ('key1', 1)
+# <class 'tuple'> タプルとして受け取れている
+# key1   タプルの第一引数はキーなのでキーが出力されている
+# 1       タプルの第二引数はvalueなのでvalueが出力されている。

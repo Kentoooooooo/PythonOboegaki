@@ -1,0 +1,26 @@
+🔵join関数とは？
+簡単に言うと文字列を結合するための関数
+test = ['ab', 'cd', 'd']
+みたいなリストがあったときに中身に連結して表示することを考える。
+大体の人はforループを使って書くことを考えそう
+result = ''
+for x in list:
+    result += x
+print(result)
+こんな感じに書くと思う。
+ただ連結するだけなのにコードを書くのは面倒だ。
+そこで、
+result = ','.join(test)
+print(result) ← ab,cd,d
+こんな感じで書けば一発で終わる。','のとこを変えれば他のフォーマットに対応できる
+
+
+🔵つづいて、数値も連結する
+list = ['ab', 'c', 'de', 4] ← この場合だとタイプエラーが起きる
+result = ''.join(list)
+print(result)
+そこで、型を変換する。具体的にはmap関数を利用する
+test = ['ab', 'c', 'de', 4]
+map_result = map(str, test)
+result = ''.join(map_result)
+print(result)

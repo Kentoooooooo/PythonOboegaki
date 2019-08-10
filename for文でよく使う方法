@@ -1,0 +1,11 @@
+enumeratem, zip, sortd, reversedはよく使うらしい
+
+for i in range(len(items)):
+    print(items[i])          ← インデックスで指定するのはあまり好まれない
+    
+    ↓↓↓↓↓↓↓↓↓↓↓↓
+for item in items:
+    print(item)              ←そのまま使う方がわかりやすい
+
+for index, item in enumerate(items):         ← 通し番号が欲しければenumerateを利用しましょう
+     print(index, item) 

@@ -1,0 +1,23 @@
+🔵range関数について
+
+引数の数によって動作が異なる。
+range(start, stop, step)
+range(start, stop)
+range(stop)
+
+stopの値は含まれない。
+list(range(10))とかtuple(range(10))みたいな感じにすると連続値のリストやタプルを作れる。
+
+🔵利用例
+・1から100までの偶数の合計を求める
+  print(sum(range(1, 100, 2)))     ← sum関数を使ってrangeの合計をを求めている
+  
+🔵forループでrange関数を利用する。
+for _ in range(10):   ← アンダースコア(_)を変数部分に利用している。これは「変数は処理の中で使用しない」ことを明示するための作法。
+  print('みりん')
+
+🔵リストの内容に順番をつけるために以下のような書き方もしない
+for i in range(len(sample_list)):
+  print((i + 1), sample_list[i])           ← こうやって書くとダサい。
+  
+※ enumerateを利用して記述する。

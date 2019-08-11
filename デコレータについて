@@ -1,0 +1,57 @@
+🔵デコレータの意味的なこと
+
+def show_func_name(func):
+  def wrapper(*args, **kwargs):
+    print(func._name__, 'を実行します')
+    return func(*args, **kwargs)
+  return wrapper
+
+if __name__ == '__main___':
+  print('関数名', len.__name__)
+  new_len = show_func_name(len)
+  new_len([])
+
+pyhonでは、関数._name__に関数の名前が入っている。
+
+print('関数名', len.__name__)を実行すると、1行目の'関数名 len'が出力される。
+
+・2行目の出力について
+  new_len = show_func_name(len)を実行することは、show_func_nameの定義から、
+  下記のように実行することと同じ意味
+  
+  new_len = show_func_name(len)
+  ↓↓↓同義↓↓↓
+  func = len                                  ← funcにlenを代入する
+  def wrapper(*args, **kwargs):               ← ラッパ関数を定義する。funcを実行することを宣言しつつ実行する。
+    print(func.__name__, 'を実行します')
+    return func(*args, **kwargs)
+  new_len = wrapper                           ← new_lenに関数wrapperオブジェクトを入れる。
+  ↓↓↓同義↓↓↓
+  def new_len(*args, **kwargs):               ← 上記のプログラムをひとまとめにして書くとこんな感じ
+    print(len.__name__, 'を実行します')
+    return len(*args, **kwargs)
+    
+  要はnew_lenは関数として扱うことができる。
+  ※new_lenは既存の関数をパワーアップさせているイメージであっていると思う。
+  
+  
+  🔵デコレータの記法
+  # 書き方1
+  def talk(message):
+    print(messae)
+  talk = show_func_name(talk)
+  
+  # 書き方2
+  @show_func_name            ← 関数の前に@をつけて書く
+  def talk(message):
+    print(message)
+  書き方2のように@をつけて書くものをデコレータと呼ぶ。
+  デコレータを使うことで、簡単な記述で機能を付加できる。
+  
+  🔵いろいろなデコレータ
+  @classmethod           ← クラスメソッドの指定
+  @staticmethod          ← スタティックメソッドの指定
+  @property              ← プロパティの指定
+  @functools.lru_cache() ← 引数と結果をキャッシュして、同じ引数なら実行せずに結果を返却
+  @app.route(path)       ← Flaskで対象パスを指定
+  

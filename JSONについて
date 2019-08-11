@@ -1,0 +1,9 @@
+🔵JSONとは？
+データを記述する簡易言語
+(JavaScript Object Nation)
+
+🔵利用には標準ライブラリのjsonモジュールを用いる
+json.dumps(データ構造)        :データ構造をJSONの文字列に変換する
+json.loads(JSONの文字列)     ：JSONの文字列をデータ構造に変換する
+json.dump(データ構造, ファイルオブジェクト)  :データ構造をJSONの文字列としてファイルに保存する
+json.load(ファイルオブジェクト)             :ファイルからJSONの文字列を読み込み、データ構造に変換する

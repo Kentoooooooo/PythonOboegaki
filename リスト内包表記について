@@ -12,3 +12,8 @@ def main():
 ・リスト内包表記で書いた場合
 def main():
   return [i ** 2 for i in range(10)]
+  
+  🔵リスト内包表記の作り方。
+  1. cube = []                                 ← まず、リストなので[]でくくる
+  2．cube = [i ** 3]                           ← 続いて、返ってきてほしい処理を書く
+  3. cube = [i ** 3 for i in range(1, 11)]     ← 最後に、いつもの感じでfor文を書く

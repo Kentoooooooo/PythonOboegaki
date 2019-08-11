@@ -4,3 +4,13 @@
 
 🔵endオプションを利用した方法
 print('文字列', end='')      ← こちらの場合endオプションで指定してるので、print関数のデフォルトの'\n'を''に変えているイメージ
+
+🔵一行だけ読み飛ばすみたいな処理
+with open(FILE_NAME) as fp:
+  fp.readline()            ← 最初の一行を読み飛ばす
+  
+  for s in fp:
+    print(s, end='')       ← 残りを表示する
+    
+🔵ファイルの書き込みをするときはopen関数のモード指定を忘れないでね
+with open('FILE_PATH', 'w', encoding='utf-8') as f:   ← 読み込みのときと違って、wでモードを指定しているよ

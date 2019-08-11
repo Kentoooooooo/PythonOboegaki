@@ -1,0 +1,18 @@
+🔵辞書を使った時のソート
+book = {}
+with open('input/book.csv', 'r', encoding='utf-8') as f:
+  for row in f:
+      columns = row.rstrip().split(',')
+          name = columns[0]
+          seat = columns[1]
+          
+          book[seat] =name            ← 座席：名前の感じで辞書を作る
+  book_seat = sorted(book.items())    ← 座席をキーとしてソートする。タプルが返ってた。
+  
+  for seat, name in book_seat:        ← book_seatがタプルなのでそれぞれをseat, nameとして値を格納する
+    print(seat, name)
+    
+🔵値を基準としてソートしたい！！！
+・sorted関数の第二引数のkey引数に関数を渡す
+items_sorted = sorted(dict.items(), key = lambda x : x[1])
+print(items_sorted)       # [(2, 'blue'), (1, 'red'), (3, 'yellow')]

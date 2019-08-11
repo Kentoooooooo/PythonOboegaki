@@ -1,0 +1,14 @@
+🔵リスト内包表記とは？
+・for文を使った簡単な処理を簡潔に書くための記法
+
+🔵0から9まで2乗のリストを作る
+・いつものfor文で書いた場合。
+def main():
+  l = []
+  for i in range():
+    l.append(i ** 2)
+  return l
+
+・リスト内包表記で書いた場合
+def main():
+  return [i ** 2 for i in range(10)]

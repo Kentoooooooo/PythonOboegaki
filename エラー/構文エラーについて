@@ -1,0 +1,5 @@
+🔵構文エラー
+・SyntaxError
+  不適切な構文でプログラムが書かれている
+・IndentationError
+  インデントの位置が正しくない

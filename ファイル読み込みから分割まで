@@ -1,5 +1,14 @@
+🔵とりあえずの格納方法
 with open('PATH', encoding='utf-8') as f:
   for row in f:
       row_string = row.rstrip().split(',')
       
 こんな感じに書けば二次元配列に入れてくれると思う。
+
+🔵注意事項
+ちょくちょく ん？ ってなることがあった。
+ファイルからの読み込み時はあくまでstr型なのでint型に変換しないといけない
+scores.append(columns[1])   ← この状態だと文字列としてscoreリストに格納されてしまう
+
+そこで
+scores.append(int(columns[1]))  ← 明示的にint型へとキャストすることによってint型としてscoresリストに格納している。

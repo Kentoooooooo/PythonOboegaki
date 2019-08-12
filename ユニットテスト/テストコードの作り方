@@ -1,0 +1,29 @@
+🔵テストコードの作り方
+たぶんだけど、、、
+1．テストケースをいくつか挙げる
+2．それぞれついてのテストコードをdefで分けて記述する
+---------------------------------------------------------------------
+import unittest
+
+
+def is_leap_year(year):
+    # うるう年の判定をしてみましょう
+    return (year % 4 == 0 and year % 100 != 0) or year % 400 == 0
+
+
+class TestLeapYear(unittest.TestCase):
+    def test_is_leap_year_4(self):
+        '''4の西暦がうるう年であるかのテスト'''
+        self.assertEqual(True, is_leap_year(4))
+
+    def test_is_leap_year_100(self):
+        '''100の西暦がうるう年でないかのテスト'''
+        self.assertEqual(False, is_leap_year(100))
+        
+    def test_is_leap_year_2400(self):
+        '''400の倍数の西暦がうるう年であるかのテスト'''
+        self.assertEqual(True, is_leap_year(2400))
+        
+    def test_is_leap_year_345(self):
+        '''345年がうるう年でないかのテスト'''
+        self.assertEqual(False, is_leap_year(345))

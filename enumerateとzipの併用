@@ -1,0 +1,12 @@
+🔵私が最初に書いたchord
+num_ja = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
+num_en = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']
+num_nl = ['een', 'twee', 'drie', 'vier', 'vijf', 'zes', 'zeven', 'acht', 'negen', 'tien']
+
+for num, num_lang in enumerate(zip(num_ja, num_en, num_nl), start=1):
+    print(num, num_lang[0], num_lang[1], num_lang[2], sep=' ')              ← zipで作ったタプルを添え字で表示している。ダサい
+    
+🔵きれいな書きかた
+  for idx, num in enumerate(zip(num_ja, num_en, num_nl), start=1): ← ここまでは同じでnumにタプルを格納
+    ja, en, nl = num                                               ← タプルを分解
+    print(idx, ja, en, nl)

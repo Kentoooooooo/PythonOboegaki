@@ -1,0 +1,85 @@
+🔵selfキーワードは自分自身を指す
+
+class Sample:
+  def get_my_self(self):
+    return self
+  
+a = Sample()
+b = a.get_my_self()
+print(a is b)             ← Trueが出力される（同値）
+
+・get_my_self関数
+  この関数は、このクラスから作られたオブジェクト自身を返す
+  a1 = Sample()
+  a2 = Sample()
+  a1とa2は、同じSampleクラスの情報を引き継いで作られたオブジェクト。
+  持っている属性は同じだけど個体としては別のものである。
+  
+・get_my_self関数の呼び出しに注目
+  a = Sample()
+  b = a.get_my_self()
+  関数の定義をみる（4行目）とget_my_self(self)となっている。引数を1つとることが明示されている。
+  しかし、実際に呼び出すコードを見てみると、get_my_self()のように引数がない。
+  
+  オブジェクトからメソッドを呼び出すと、そのメソッドの第一引数(self)に自分自身が自動的に渡される。
+  
+  ・補足
+  以下のようなchordだと冗長である
+  a = Sample()
+  a.get_my_self(a)       ← 自分自身のメソッドを呼び出すのに、自分自身を引数に入れるのは冗長
+  
+  1．自分自身を呼び出す引数は定義する必要がある。
+  2．呼び出すときには空気を読むから、代入不要
+  
+  
+  ・selfがないと困る理由
+    ローカル変数と区別がつかなくなるから。
+    class Sample:
+      num = 100
+      def show_num(self):
+        num = 200
+        print(self.num) # 100        ← Sampleクラスのうちのnumていう変数を表示している
+        print(num) # 200             ← selfキーワードがない場合、関数内部で初期化されたローカル変数だとみなされる。
+        
+    a = Sample()
+    a.show_num()
+    
+🔵関数の定義
+  ・関数の定義の際に第一引数としてselfを入れなきゃいけないこと以外は普通の関数と同じ
+  def descrive(self, int)
+    pass
+    
+  ・利用するときにはselfのことを書く必要はない
+    
+    a.descrive(int)    ← selfは無視して利用する
+    
+    
+🔵クラスとインスタンス
+  クラスから作られたオブジェクトのことを、インスタンスと呼ぶ。
+  インスタンス固有のデータと、クラス自体のデータを定義できる
+  
+  ・クラス変数
+  クラス自体が保持する変数のこと。Pythonでは、原則としてクラス名の元に宣言された
+  変数はクラス変数としてみなされる。
+  
+  class Sample1:
+    name = 'name'
+    
+  print(Sample1.name)
+  Sample1.name = 'changed_name'
+  print(Sample1.name)               ← Sample1.nameのように、クラス名.変数名の形式で利用する
+  
+  
+  ・インスタンス変数
+    オブジェクト固有の変数のこと。selfキーワードで利用できる。
+    
+    class Sample2:
+      def __init__(self, value):
+        self.value = value
+    s1 = Sample2('AAA') # AAA
+    s2 = Sample2('BBB') # BBB
+    print(s1.value)
+    print(s2.value)
+    s1.value = 'CCC'
+    s1 = Sample2('AAA') # CCC
+    s2 = Sample2('BBB') # BBB        ←s1が参照している値を変更しても、s2の値には全く影響がない。オブジェクト固有だから。

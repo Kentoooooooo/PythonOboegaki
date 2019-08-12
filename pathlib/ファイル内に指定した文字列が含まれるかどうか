@@ -1,0 +1,43 @@
+🔵ファイル内に指定した文字列が存在するかどうかを操作する。
+
+ディレクトリinput/内にito_0801.txtのように名前とひづけがアンダースコア区切りのファイルがある。
+ファイルの中には、出席か、欠席の文字が記載されている。
+
+・ファイル例ito_0801.txt
+1．出席
+2．1人
+
+問題：出席と記載があれば、そのファイルパスを表示する
+---------------------------------------------------------------
+"""出席かどうかの確認."""
+
+
+def search(file_path, search_text):                       ← 関数の定義
+    with open(file_path, encoding='utf-8') as f:          ← 指定したファイルパスを利用してファイルを開く
+        if search_text in f.read():                       ← f.read()を利用してファイル読み込み
+            print(file_path)                              ← 指定した文字列が存在していれば表示
+
+
+if __name__ == '__main__':
+    search('input/ito_0801.txt', '出席')
+    search('input/sato_0801.txt', '出席')
+
+------------------------------------------------------------------
+こちらは、ファイルパスの対象がファイルとは限らないため、openする前にファイルであることを確認している。
+"""出席者ファイルを取得する."""
+import os
+
+
+def search(target_path, filename, search_text):
+    file_path = os.path.join(target_path, filename)
+    if os.path.isfile(file_path):                               ← ファイルであることの確認を行っている。
+        with open(file_path, encoding='utf-8') as f:
+            if search_text in f.read():
+                print(filename)
+
+
+if __name__ == '__main__':
+    search('input', 'ito_0801.txt', '出席')
+    search('input', 'sato_0801.txt', '出席')
+    search('input', 'NOT FILE NAME', '出席')
+

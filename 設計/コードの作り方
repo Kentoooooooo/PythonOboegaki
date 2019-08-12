@@ -1,0 +1,60 @@
+🔵良いプログラムって？
+・どこで何をしているのか読みにくい ＝＝ 可読性が低い
+・修正がしにくい。1箇所修正するといろいろな場所で動かなくなる ＝＝ 保守性が低い
+・過剰にファイルを開いて閉じている
+
+
+🔵コードをキレイに書く方法
+ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+import os
+
+
+def main():
+    # 商品のマスターデータ読み込み
+    items = {}
+    with open('input/items.csv', encoding='utf-8') as f:
+        for row in f:
+            data = row.rstrip().split(',')
+            item_id = data[0]
+            name = data[1]
+            price = data[2]
+            items[item_id] = {
+                'name': name,
+                'price': price
+            }
+
+    with open('output/sales.csv', mode='w', encoding='utf-8') as sales_f:
+        for name in os.listdir('input/'):
+            if name.startswith('sales_raw_') and name.endswith('.csv') \
+                    and "201611" in name:
+                with open(os.path.join('input/', name), encoding='utf-8') as f:
+                    for row in f:
+                        data = row.rstrip().split(',')
+                        item_id = data[2]
+                        if item_id in items:
+                            sales_f.write(
+                                ','.join((
+                                    data[0],
+                                    data[1],
+                                    data[2],
+                                    items[item_id]['name'],
+                                    items[item_id]['price'],
+                                    data[3],
+                                    data[4],
+                                )) + '\n'
+                            )
+
+
+if __name__ == "__main__":
+    main()
+ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+
+🔵まず初めの処理としてCSVのデータを辞書に入れている
+
+items[item_id] = {
+  'name': name,
+  'price': price
+}
+※ 辞書の値として、さらに辞書を入れている。
+
+🔵Items辞書を使って商品の取り出し

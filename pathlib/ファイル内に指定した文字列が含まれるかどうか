@@ -34,6 +34,8 @@ def search(target_path, filename, search_text):
         with open(file_path, encoding='utf-8') as f:
             if search_text in f.read():
                 print(filename)
+
+！！！！！！！！！！！！！！！ ここから下がかなり重要だと思う ！！！！！！！！！！！！！！！！！！！！！！
 🔵出席者の一覧を表示する
 def search(target_path, search_text):                         ← 関数の定義
     for filename in os.listdir(target_path):                  ← os.listdir(PATH)でパスのリストを作成
@@ -51,3 +53,22 @@ if __name__ == '__main__':
     search('input', 'sato_0801.txt', '出席')
     search('input', 'NOT FILE NAME', '出席')
 
+
+🔵子ディレクトリも含めてファイルの中身を調べる
+"""出席者ファイルを取得する."""
+import os
+
+
+def search(target_path, search_text):                   ← 関数の定義
+    for root, dirs, files in os.walk(target_path):      ← os.walk(PATH)でファイルのパス、ディレクトリ名、ファイル名を取得
+        for name in files:                              ← ファイル名ごとに処理を実行
+            path = os.path.join(root, name)             ← ファイル名ごとに相対パスを作成
+            if os.path.isfile(path):                    ← 作成したパスがファイルなら以下を実行（上でファイル名ごとに処理を行っているので不要）
+                with open(path, encoding='utf-8')as f:  ← ファイルのオープン
+                    if search_text in f.read():         ← ファイルに文字列が含まれているかどうか
+                        print(name)
+                    
+
+
+if __name__ == '__main__':
+    search('input', '出席')

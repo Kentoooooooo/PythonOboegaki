@@ -1,0 +1,15 @@
+いくつかテストの実行方法があるらしい。
+
+🔵通常のPythonプログラムと同じように実行する方法
+  if __name__ == '__main__':
+    unittest.main()
+  ターミナルでは
+    $ python 2.py
+    
+🔵unittestをモジュールとして指定する方法
+  $ python -m unittest 2.py
+  
+🔵モジュール名、クラス名、メソッド名を指定して実行する方法
+  $ python -m unittest 2.TestStringMethods.test_upper
+  この場合は2は2.pyというファイル名なので、モジュール名となる。
+  TestStringMethodsくらすのtest_upperメソッドのみを実行している。

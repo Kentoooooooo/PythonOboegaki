@@ -34,7 +34,17 @@ def search(target_path, filename, search_text):
         with open(file_path, encoding='utf-8') as f:
             if search_text in f.read():
                 print(filename)
-
+🔵出席者の一覧を表示する
+def search(target_path, search_text):                         ← 関数の定義
+    for filename in os.listdir(target_path):                  ← os.listdir(PATH)でパスのリストを作成
+        file_path = os.path.join(target_path, filename)       ← 実際に探すファイルをos.path.join(DIR, FILENAME)で作成
+        if os.path.isfile(file_path):                         ← ファイルかどうかの確認
+            with open(file_path, encoding='utf-8) as f:       ← ファイル読み込み
+                if search_text in f.read():                   ← 文字列が含まれるかどうかの確認
+                    print(filename)
+                    
+if __name__ == '__main__':
+    search('input', '出席')
 
 if __name__ == '__main__':
     search('input', 'ito_0801.txt', '出席')

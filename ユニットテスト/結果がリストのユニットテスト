@@ -1,0 +1,45 @@
+🔵結果がリストとなる関数のユニットテスト
+  引数から始まる10個の整数のリストを返す関数のユニットテストをしてみる
+  
+  ・expected変数に利用の結果
+  ・actual変数に実際の動作結果を入れる
+  ・assertEqual関数を利用して比較を行う。
+  
+-------------------------------------------------------------------------
+import unittest
+
+
+# テストされる関数
+def create_number_list(num):
+    """引数から始まる10個の整数のリストを返す関数."""
+    return list(range(num, num + 10))
+
+
+class TestCreateNumberList(unittest.TestCase):
+
+    def test_create_number_list(self):
+        """関数create_number_listのテスト."""
+        expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        actual = create_number_list(1)
+        
+        self.assertEqual(expected, actual) 
+-----------------------------------------------------
+🔵偶数判断のテスト
+テスト関数はtest_から始まるよ
+
+import unittest
+
+
+def is_even(num):
+    return num % 2 == 0
+
+
+class TestEven(unittest.TestCase):
+
+    def test_is_even_2(self):                  ← 実際に関数に入力する値をテスト関数名に入れるのかも
+        """2が偶数のテスト."""
+        self.assertEqual(True, is_even(2))
+
+    def test_is_even_5(self):
+        """5が偶数でないテスト."""
+        self.assertEqual(False, is_even(5))

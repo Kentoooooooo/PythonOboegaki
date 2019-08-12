@@ -1,0 +1,29 @@
+🔵クラスから使える関数
+  クラス変数があるように、クラス関数もある。
+  よく使う関数群をまとめたクラス（ユーティリティクラス）を定義するときに活用される
+  class TaxCalc:
+    @classmethod
+    def class_method(cls, price):
+      assert cls.__name__ == TaxCalc.__name__
+      return int(price * 0.08)
+      
+    @staticmethod
+    def static_medhod(price):
+      return int(price * 0.08)
+    
+    print(TaxCalc.class_method(1000))
+    print(TaxCalc.static_method(1000))
+    
+    インスタンスメソッドとの区別をつけるために、関数の頭に@classmethodか@staticmethodをつける
+    このアットマークを付けて関数を装飾する記述をデコレーターと呼ぶ。
+    関数にデコレータをつけると、何らかの機能を追加する。
+    
+🔵クラスメソッドとスタティックメソッドの違い
+  違いは1つだけ。
+  クラスメソッドはメソッドのselfと同じで、第一引数に自動的に自身のクラスが格納される。
+  スタティック目そddの場合は、その代入はない。
+
+🔵クラスメソッドといスタティックメソッドのどちらを使うか？
+  ・クラスの情報が必要な場合は、@classmethodを使う。
+  ・派生クラスでオーバーライドする場合も@classmethodを使う。
+  ・クラスの情報が不要で、橋クラスでオーバーライドしない場合は@staticmethodを使う。

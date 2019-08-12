@@ -1,0 +1,14 @@
+🔵ファイルの読み込み
+from pathlib import Path
+
+p = Path('read.txt')
+
+print('Contents:', p.read_text())  ← パスである「p」からファイルの中身を読み込んでいる。
+# Contents: Hello, World
+
+🔵ファイルの書き込み
+from pathlib import Path
+
+p = Path('test.txt')
+p.write_text('TEST')                ← パスで指定して書き込みを行っている。
+print('Contents:', p.read_text())   ← 読み込み

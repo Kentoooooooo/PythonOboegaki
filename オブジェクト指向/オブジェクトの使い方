@@ -1,0 +1,45 @@
+class Human:
+    age = 0  # 年齢
+    last_name = ''  # 姓
+    first_name = ''  # 名前
+    blood_type = ''  # 血液型
+    
+h = Human()                  ← 上記のクラス定義から一つ一つ値を入れると面倒
+h.age = 33
+h.last_name = '田中'
+h.first_name = '一郎'
+h.blood_type = 'O'
+
+h = Human(33, '田中', '一郎', 'O')   ← こんな感じにできると1行で完結して便利
+
+🔵__init__メソッド
+Pythonでオブジェクトを生成するときには、__init__という名称の関数（__init__メソッド）が呼び出される。
+
+Pythonでは＿＿（アンダースコア2つ）から始まる変数や関数は、そのクラス内でしか参照できなくなる。
+初期化するときは他のクラスからの影響を受けては困るので、そのような配慮がなされている。
+
+🔵__init__メソッドを定義する
+class Human:
+  def __init__(self, age, last_name, first_name, blood_type):
+    self.age = age
+    self.last_name = last_name
+    self.first_name = first_name
+    self.blood_type = blood_type
+    
+・__init__メソッドの第一引数のself
+  Pythonではオブジェクトが利用する関数を定義する場合、第一引数はオブジェクト自身が自動的に代入される仕組みになっている。
+  簡単に言うと、第一引数は予約済みである。
+  
+🔵デフォルト値を与えると便利
+  任意の値を入れたい場合もあれば、そうでない場合もある。
+  そのため、__init__メソッドを作るときはデフォルト値を前もって設定しておくと便利。
+  
+  class Human:
+    def __init__(self, age=0, last_name='', first_name='', blood_type=''): ← ここであらかじめ初期値を設定しておく
+      self.age = age
+      .....
+      
+    このように記述しておくことで、下記のどちらの呼び出しにも対応できる。
+  h1 = Human()
+  h2 = Human(33, '田中', '一郎', 'O')
+      

@@ -1,0 +1,46 @@
+🔵暗号通信のためのプログラム
+アルファベットを数字に置き換える
+
+Aだったら1、Bだったら2のように自動で変換する。
+
+from string import ascii_uppercase   ← string.ascii_uppercase は大文字の'AB....Z'
+
+ALLOW_CHARS = ' ' + ascii_uppercase  # ' ABCD....XYZ'Numbering alphabet ← ascii_uppercaseの最初に' '（スペース）を追加している
+
+
+def encrypt(value):                                    ← 暗号化のための関数
+    """文字列を受取り、暗号化して数字列を返します          ← 関数についてのなんかコメントがでるやつ
+
+    :param str value: 暗号化の対象文字列
+    :return: 数字のリスト
+    :except ValueError: 予定外の文字がvalueに含まれている場合
+    """
+    nums = []  # 返値のリスト                            ← リストを作っておく
+    for c in value:                                     ← 文字列を1文字ずつ取り出してループ
+        n = ALLOW_CHARS.index(c.upper())                ← str.index()は文字列における位置を返す。存在しない文字にはValueErrorを返す
+        nums.append(n)                                  ← .index()で調べた番号をリストに格納
+    return nums
+
+
+def input_loop():                                       ← encrypt関数を繰り返し実行するための関数
+    while True:                                         ← while True:とすることで無限ループを作っている。
+        value = input('文章を入力してください[A-Z,Space]:') ← input関数：printf() + scanf()みたいな関数
+        try:
+            nums = encrypt(value)                       ← valueを暗号化した結果をnumsに格納
+        except ValueError:                              ← 例外処理：ALLOW_CHARSに無い文字列が来たらValueErrorが来る
+            print(value, 'はローマ字またはスペースではありません')
+        else:　                                         ← numsをアンパックして表示する
+            print(*nums)
+        finally:                                        ← finally節は毎回実行されるので毎回聞きたい内容を書く
+            print('終了するにはCtrl-Cを入力してください')
+
+
+def main():
+    try:
+        input_loop()
+    except KeyboardInterrupt:                           ← KeyboardInterruptはCtr+cで発生する。
+        print('\nbye bye')                              ← 例外処理によりループを終わらせている。
+
+
+if __name__ == '__main__':
+    main()

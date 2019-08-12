@@ -1,0 +1,32 @@
+🔵assert文を利用する
+  「想定結果」と「実行結果」を見比べる
+  比べるための関数がTestCaseクラスに用意されている
+  assert(検査)から始まる関数群
+  
+  ・代表的なassert文
+    assertEqual(a, B)      a == b
+    assertNotEqual(a, b)   a != b
+    assertTrue(x)          x == True
+    assertFalse(x)         x == False
+-------------------------------------------------------
+import unittest
+
+
+class TestStringMethods(unittest.TestCase):
+
+    def test_upper(self):
+        """str.upper()メソッドが大文字アルファベットを返すかテスト."""
+        self.assertEqual('foo'.upper(), 'FOO')
+
+    def test_not_upper(self):
+        """str.upper()メソッドが文字列をそのまま返さないかをテスト."""
+        self.assertNotEqual('foo'.upper(), 'foo')
+
+    def test_is_digit(self):
+        """str.isdigit()メソッドが全て数字の文字列の場合はTrueを返すかテスト."""
+        self.assertTrue('123'.isdigit())
+
+    def test_is_not_digit(self):
+        """str.isdigit()メソッドが数字以外の文字が混ざった文字列の場合はFalseを返すかテスト."""
+        self.assertFalse('123ppap'.isdigit())
+----------------------------------------------------------------------------------

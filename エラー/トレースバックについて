@@ -1,0 +1,23 @@
+🔵暗号通信のプログラムに対してCtr+cを入力したときのErrorMessageを見ていく
+$python translator.py
+文章を入力してください[A-Z, Space]:^C
+Traceback(most recent call last):
+  File "translator.py", line 35, in <module>
+    main()
+  File "translator.py", line 31, in main
+    input_loop()
+  File "translator.py", line 22, in input_loop
+    value = input('文章を入力してください[A-Z, Space]:')
+  KeyboardInterrupt
+  
+  
+プログラムのことをよく知らない利用者がこれを見ると驚く
+try~exceptで想定外のエラーを補足することでユーザが使いやすいプログラムを作る
+
+トレースバックは開発者向けの重要な情報を含む
+Traceback (most recent call last):
+意味は「ここからトレースバックを関数の呼び出し順に表示（一番下が最後に実行された関数」
+
+上から順にみていくと、35行目にあるmain関数が呼び出される     ← モジュール直下の35行目で関数呼び出しを最初にした
+                    31行目にあるinput_loop()が呼び出される ← 31行目で次に関数呼び出しを行った
+                    22行目でKeyboardInterruptが発生した   ← キーボードの処理が中断された

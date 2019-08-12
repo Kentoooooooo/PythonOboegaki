@@ -1,0 +1,33 @@
+🔵自クラスが保持している変数や関数に対して、他のクラスがアクセスできるかどうかを制限できる
+
+public:どこからでもアクセス可能
+plivate:自分のクラスだけアクセス可能
+
+class Sample:
+  num1 = 100
+  __num2 == 200
+
+print(Sample.num1)
+# print(Sample.__num2)   ← クラスの外からは参照できない
+
+plivate変数にアクセスするには関数内からアクセスする
+class Sample:
+  __num2 = 200
+  
+  def __init__(self):
+    self.__num3 = 300
+  
+  def show_num(self):
+    print(Sample.__num2)
+    print(self.__num3)
+    
+s = Sample()
+s.show_num()
+# print(s.__num3)   ← 外からは参照できない
+
+🔵どうやってほかのクラスから参照できないようにしているのか
+名前マングリング（名前難号化）という機能で変数名を変えている。
+例えば、Sampleクラスの__num3という変数は、_Sample__num3に代わっている
+
+a = Sample()
+print(a._Sample__num2)         ← 普通は外から参照できないけど、名前を直接指定することで参照できている。

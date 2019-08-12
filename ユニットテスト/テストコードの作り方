@@ -2,6 +2,10 @@
 たぶんだけど、、、
 1．テストケースをいくつか挙げる
 2．それぞれついてのテストコードをdefで分けて記述する
+
+
+実際のテストでは、可能なテストケース網羅的に探すことが重要だと思った。
+実際に、2つめのコードで、3と5の倍数以外のテストをすることを忘れていた。
 ---------------------------------------------------------------------
 import unittest
 
@@ -27,3 +31,38 @@ class TestLeapYear(unittest.TestCase):
     def test_is_leap_year_345(self):
         '''345年がうるう年でないかのテスト'''
         self.assertEqual(False, is_leap_year(345))
+---------------------------------------------------------------------------------
+ef fizzbuzz(num):
+    if num % 15 == 0:
+        return 'FizzBuzz'
+    elif num % 3 == 0:
+        return 'Fizz'
+    elif num % 5 == 0:
+        return 'Buzz'
+    else:
+        return str(num)
+
+class TestFizzBuzz(unittest.TestCase):
+    def test_is_fizz(self):
+        '''3の倍数がFizzを返すかのテスト'''
+        expect = 'Fizz'
+        actual = fizzbuzz(6)
+        self.assertEqual(expect, actual)
+        
+    def test_is_buzz(self):
+        '''5の倍数がBuzzを返すかのテスト'''
+        expect = 'Buzz'
+        actual = fizzbuzz(35)
+        self.assertEqual(expect, actual)
+        
+    def test_is_fizzbuzz(self):
+        '''15の倍数がFizzBuzzを返すかのテスト'''
+        expect = 'FizzBuzz'
+        actual = fizzbuzz(45)
+        self.assertEqual(expect, actual)
+
+    def test_is_other(self):
+        '''上記以外の数値がnumを返すかのテスト'''
+        expect = '8'
+        actual = fizzbuzz(8)
+        self.assertEqual(expect, actual)

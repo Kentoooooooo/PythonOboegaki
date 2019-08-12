@@ -1,0 +1,77 @@
+🔵ファイル操作関連はosを使った方法もあるらしい
+
+パスを使った、ディレクトリかどうかの判定とかosを使ってできる。
+
+🔵ファイルの走査
+  ファイルの走査も例外でない。
+  ・指定したディレクトリ内のエントリ名の一覧を取得できる。
+  
+ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+import os
+
+def directory_list(target_path):
+    for name in os.listdir(target_path):    ← OSのメソッドを利用してパスのイテラブルを取得している
+        print(name)
+
+
+if __name__ == '__main__':
+    directory_list('input')
+ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー    
+🔵下の層も含めた操作
+import os
+
+
+def directory_tree(target_path):
+    for root, dirs, files in os.walk(target_path):
+        print(root)
+        for drc in dirs:
+            print('\t', drc)
+        for file in files:
+            print('\t', file)
+
+if __name__ == '__main__':
+    directory_tree('input')
+    
+・os.walkを利用することで実現できる。
+os.walk(top)はtopをでぃくれくとりのツリーの基準として、そのツリーに含まれる各ディレクトリごとに、タプル（root, dirs, files)を返す
+for文に引数root, dirs, filesを指定すると、そこに各ディレクトリと後にデータが代入されていく
+・rootにはディレクトリのパスが代入される
+・dirsには、root内に存在するサブディレクトリのリストが代入される
+・filesには、root 何に存在するファイルのリストが代入される。
+
+
+🔵指定したフォルダの一覧を取得
+ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+import os
+
+def directory_list(target_path):
+    for root, dirs, files in os.walk(target_path):
+        for file in files:
+            print(root,file,sep='/')
+
+
+if __name__ == '__main__':
+    directory_list('input/a')
+ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+
+os.listdir(path)は引数pathで指定されたディレクトリ内のファイル名やディレクトリ名が入ったリストを返す。
+
+🔵walkを用いて指定したフォルダ以下の一覧を取得
+import os
+
+def directory_tree(target_path):
+    for root, dirs, files in os.walk(target_path):
+        for name in files:
+            path = os.path.join(root, name)
+            print(path)
+
+if __name__ == '__main__':
+    directory_tree('input')
+
+
+
+
+
+
+
+

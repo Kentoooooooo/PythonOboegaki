@@ -1,0 +1,6 @@
+🔵ファイルの読み書きはPythonの標準ライブラリにある 
+  read_csv => csv.DictReader
+  write_csv => csv.DictWriter
+  
+  csv.Dictreaderの使い方は今までのread_csvと同じ
+  csv.DictWriterは少し違て、データの書き込みにwriter.writerows(...)メソッドを使う

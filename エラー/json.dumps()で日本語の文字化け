@@ -1,0 +1,4 @@
+🔵jsonの書き込みでなぜか日本語がうまくファイル書き込みできなかった。
+  
+  対応例 ： json.dump(data, f, ensure_ascii=False)
+  ensure_ascii=Falseとするとうまくいった。

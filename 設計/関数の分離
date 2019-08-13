@@ -1,0 +1,69 @@
+🔵現状のプログラムでは「CSVを読み込む」という処理が2箇所ある。
+  ・商品マスタの読み込み
+  ・売上生データの読み込み
+  
+  ⇒ CSVファイルという形式は同じなので「CSVファイルを読み込む関数」として一つにまとめる
+-------------------------------------------------------------------------------
+
+def read_csv(f, columns):                             ← 読み込みの関数を定義ファイルオブジェクトとカラムを受け取る
+    '''csvファイルを読み込んで辞書のリストで返す
+    各行のキーはcolumnsに指定された値とする
+    '''
+    
+    ret = []                                          ← 返すための配列を作る
+    for row in f:
+        row_dict = {}                                 ← ファイルオブジェクトのそれぞれの行に対して辞書を作る
+        data = row.rstrip().split(',')                ← データとして分割
+        for column, value in zip(columns, data):      ← カラムとデータを対応させるためにzipを
+            row_dict[column] = value                  ← 辞書に対してキー：カラム、value：データとして格納
+        ret.append(row_dict)                          ← 返すためのリストに追加
+    return ret
+-------------------------------------------------------------------------------
+🔵CSVへの書き込み関数を作る
+  CSVへの書き込みは「売上データのファイルへの書き出し処理」以外では使われていない
+  
+  利点としては以下が挙げられる。
+  ・CSV形式でファイルへの書き込みという処理はより汎用的に使える。
+  ・「売上データ」はCSVで書き出すということが明確になる
+  ※ 関数は「役割」や「再利用性」、「汎用性」に着目して分離する
+-------------------------------------------------------------------------------
+  def write_csv(f, data, columns):
+    '''辞書のリストを、columns の順にCSVに書き込む
+    '''
+
+    for row in data:
+        row_str = ','.join(str(row[column]) for column in columns)
+        f.write(row_str + '\n')
+-------------------------------------------------------------------------------
+🔵さらに処理を分割する
+  読む・書く の関数を実装できた。それを用途ごとに分ける
+  今のところ、「商品マスターデータを読み込む」「売上生データを読み込む」などの処理をread_csvのような関数を利用して書いていた。
+  このそれぞれの「商品マスターデータを読み込む」「売上生データを読み込む」処理を関数化することにより、他の処理でも使いまわせるようにする 。
+  --------------------------------------------------------------------------------
+  def read_items():
+    items = {}
+    with open(ITEMS_DATA, encoding=ENCODING) as f:
+        for row in read_csv(f, ITEMS_COLUMNS):
+            items[row['item_id']] = row
+    return items
+
+
+def read_sales_raw(target_year, target_month):
+    sales_raw = []
+    for name in os.listdir(SALES_RAW_DIR):
+        m = SALES_RAW_REGEX.search(name)
+        if m and m.group(1) == target_year and m.group(2) == target_month:
+            with open(os.path.join(SALES_RAW_DIR, name), encoding=ENCODING) as f:
+                for row in read_csv(f, SALES_RAW_COLUMNS):
+                    sales_raw.append(row)
+    return sales_raw
+
+
+def write_sales(sales):
+    with open(SALES_CSV, mode='w', encoding=ENCODING) as f:
+        write_csv(f, sales, SALES_COLUMNS)
+
+def main():
+  items = read_items()
+  sales_raw = read_sales_raw(target_year, target_month)
+  write_sales(sales)

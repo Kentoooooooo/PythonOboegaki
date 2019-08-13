@@ -1,0 +1,27 @@
+🔵プログラムに引数をとれるようにする
+  今までは「対象の年月を変えるのに毎回プログラムの変数を変更する」必要があった。
+  ⇒ python main.py 2017 11  のように引数から指定できるようにしたい。
+  
+  import argparse
+  
+def main():
+  parser = argparse.ArgumentParser(
+    description='It's command to generate data'
+  )
+  parse.add_argument('year', help='売上生データ取り込み対象年', type=int)
+  parse.add_argument('month', help='売上生データ取り込み対象月', type=int)
+  args = parser.parse_args()
+  
+  # reading of raw data
+  sales_raw = read_sales_raw(args.year, args.month)
+  
+----------------------------------------------------------------
+まず、argparse.ArgumentParserを作りparser.add_argument(...)から受け取る引数を塚する
+
+🔵.add_argument(...)の意味
+  1. 'year'：一つ目の引数の名前をyearとする
+  2．help='...':この引数の使い方や意味の説明
+  3. type=int:受け取る引数がintであると指定
+  
+  parser.parse_args()とすると、ターミナルで渡された引数を解釈して返す
+  parser.add_argument(...)で'year'という引数を指定しているのでargs.yearで数字が取得できる

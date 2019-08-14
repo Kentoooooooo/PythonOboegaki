@@ -1,0 +1,55 @@
+🔵クロール結果をCSVに保存
+  Scrapyはクロールした結果を簡単にCSVやJSONなどのファイルに保存もできる
+  
+  Scrapyのファイル保存機能を使うためには、クロールした結果を辞書形式で戻す必要がある。
+  
+  ※ScrapyでCSSセレクターを利用するときには、cssメソッドを利用する。
+    BeautifulSoupとは違うので注意
+  
+🔵ポイント
+  ・ScrapyでCSSセレクターを利用してHTMLを解析するときはresponse.cssメソッドを利用する
+  ・parseメソッドの返り値に辞書のリストを渡すとその内容がファイルに保存される。
+  ・Scrapyコマンドの-oオプションは拡張子(.csv)を自動で判断して適した内容のデータをファイルに保存する。
+    CSV以外にもJSONやXMLなどをサポートしている。
+  
+🔵クロールのコード
+  import scrapy                                               ← Scrapyをimport
+  
+  
+  class ComplexSpider(scrapy.Spider):
+    name = 'complex'                                          ← 実行時の名前（たぶん）
+    allwed_domains = ['docs.pyq.jp']
+    atart_url = [
+      'https:~~~~~~~~~~~~.html'                               ← 取得するURL
+    ]
+    
+    def parse(self, response):
+      items = []
+      
+      div_item_list = response.css('div.item-list')[0]        ← CSSメソッドで取得する（CSSの結果はリストなので1番目を格納）
+      for div_item in div_item_list.css('div.item'):          ← さらにdivタグのitemを探す
+        item_name = div_item.css('a.item-name::text').extract_first()  ← 商品名を取得する （※）
+        item_name = item_name.strip()
+        
+        item_link = div_item.css('a.item-name::attr(href)').extract_first()
+        item_link = item_link.strip()
+        
+        item_info = {
+          'name': item_name,                                   ← それぞれを辞書に格納
+          'link': item_link,
+        }
+        
+        items.append(item_info)
+        
+      return items
+      
+      
+（※）商品名取得の処理について
+  1. css('a.item-name::text')... div_itemタグの中から「a.item-name」のタグで囲まれた「text」を抽出する
+  2．extract_first()... CSSメソッドはリストのデータを返すので最初のデータを取得
+  
+  
+🔵Scrapyを利用することのメリット
+  Scrapyを利用することで基本的にはコンテンツの解析処理に集中できる。URLからデータを取得する処理や、
+  解析した結果を自分で保存する処理を書かなくてもよいというメリットがある。
+  

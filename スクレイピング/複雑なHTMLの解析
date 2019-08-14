@@ -1,0 +1,74 @@
+🔵複雑なHTMLの解析
+  対象のHTMLが複雑な入れ子になっている場合
+  
+  商品の一覧の情報は<div class='item-list'>というタグを抽出すれば、その中に全商品情報が入っている。
+  さらにその中から<div class='item'>のタグを抽出すれば、1つずつの商品の情報が取得できる。
+  
+  ・特定のタグを抽出するときは、CSSセレクターを活用する。
+  
+🔵HTMLタグをCSSセレクターで表現する例
+  タグとCSSクラスを「.」（ドット）で繋げて表現する
+  タグ - > CSSセレクター
+  <div class='item-list'> - > div.item-list
+  <div class='item'> - > div.item
+  
+🔵実際に抽出する
+  ・HTMLの構造 
+  <div class='item-list'>                                                ← item-listにitemが列挙されている
+    <div class='item' id='item-id-1'>                                    ← itemが入っている
+      <a class='item-name' href='htps:~~~~~~~~.html'>最新式冷蔵庫</a>     ← その中にitem-nameがある
+      <ul>
+        <li>
+          ::before
+          '価格:'
+          <span class='item-price'>32,000円</span>                        ← さらにitem-priceがある
+        </li>
+        <li>...</li>
+        <li>...</li>
+      </ul>
+      <p class='item-description'>...</p>
+    </div>
+    <div class='item' id='item-id-2>...</div>                             ← リストの中にitemが列挙されている。
+    <div class='item' id='item-id-3>...</div>
+    <div class='item' id='item-id-4>...</div>
+  </div>
+  
+  ・pyコード
+    import requests                                          ← HTML情報引っ張るようにrequestsをインポート
+    from bs4 import BeautifulSoup                            ← 構文解析用にインポート
+    
+    url = 'https:~~.html'
+    response = requests.get(url)                             ← いつものおまじない
+    response.encoding = response.apparent_encoding
+    
+    bs = BeautifulSoup(response.text, 'html.parser')         ← HTMLパーサを取得したHTMLデータに適用
+    
+    div_item_list = bs.select('div.item-list')               ← divタグの中にあるitem-listを探す。1つとは限らないのでリストが返る
+    
+    for div_item in div_item_list[0].select('div.item'):     ← dev_item_listはリストなので0番目を指定。この中のdivタグの中にあるitemを探す
+      item_name_tags = div_item.select('a.item-name')        ← itemのリストからさらにitem-nameを取得
+      item_name_tag = item_name_tags[0]                      ← selectするとリストが返るので0番目を格納
+      item_name = item_name_tag.text.strip()                 ← テキスト部の改行文字をなくす
+      
+      item_price_tags = div_item.selece('span.item-price')
+      item_price_tag = item_price_tags[0]
+      item_price = item_price_tag.text.strip()
+      
+      print('商品名: {} 価格: {}'.format(item_name, item_price))
+      
+      
+      
+🔵数字が含まれている文字列をリストにして格納する
+  for div_item in div_item_list[0].select('div.item'):
+    
+    item_stock_tags = div_item.select('span.item-stock')
+    item_stock_tag = item_stock_tags[0]
+    item_stock = item_stock_tag.text.strip()
+    
+    if item_stock == '無し':
+      continue
+    
+    item_stock = item_stock.replace('個', '')   ← 個をなくす
+    item_stock = item_stock.replace(',', '')    ← 桁区切りの「,」をなくす
+    item_stock = int(item_stock)                ← 数値に直す
+    stock_list.append(item_stock)               ← 配列に格納する

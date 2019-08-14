@@ -1,0 +1,55 @@
+🔵HTMLの解析
+  HTMLを解析するにはBeautifulSoupを利用する。
+  
+  ・抽出対象HTMLの内容
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>解析用のHTML</title>
+  </head>
+  <body>
+    <h1>解析用のHTML</h1>
+    <ul id="link-list">
+      <li>
+        <a href="http://example.com/1">テスト1</a>
+      </li>
+      <li>
+        <a href="http://example.com/2">テスト2</a>
+      </li>
+      <li>
+        <a href="http://example.com/3">テスト3</a>
+      </li>
+    <ul>
+  </body>
+</html>
+
+🔵抽出する
+  この中から
+  <a href="http://example.com/1">テスト1</a>
+  を抽出する
+  
+🔵ポイント
+  ・スクレイピングを始める前にHTMLをよく読んでどうやったら抜き出せるか考える。
+  ・BeautifulSoupから目的のタグを抽出したい場合はfindメソッドを利用する
+  
+import requests                                       ← スクレイピング用
+from bs4 BeautifulSoup                                ← BeautifulSoupを利用する
+
+url = 'https://docs..~~~~~~~~~~'
+response = requests.get(url)
+response.encoding = response.apparent_encoding        ← いつものおまじない
+
+bs = BeautifulSoup(response.text, 'html.parser')      ← 取得したHTMLをBeautifulSoupに渡して解析を始めている。
+                                                        BeautifulSoupクラスの第一引数にはHTMLを渡す。
+                                                        第二引数はHTMLパーサーを指定する ※
+                                                        ※ HTMLの軸解析をして、タグなどを判断してデータ構造として取得するプログラムのこと
+
+ul_tag = bs.find('ul')                                ← ulタグの抽出
+
+for a_tag in ul_tag.find_all('a')                     ← ulタグの中にはaタグがたくさんあるのでfind_all('a')している
+                                                        a_tagは<a href='http://example.com/1'>テスト1</a>
+  text = a_tag.text                                   ← テスト1： 
+  link_url = a_tag['href']                            ← href属性（URL）を取得している
+  
+  print('{}: {}'.format(text, link_url))

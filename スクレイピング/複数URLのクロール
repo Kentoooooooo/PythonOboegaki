@@ -1,0 +1,16 @@
+🔵複数のURLを指定してクロールする
+
+import scrapy
+
+
+class MultipleSpider(scrapy.Spider):
+  name = 'multiple'
+  allowed_domains = [(docs.pyq.jp']
+  start_urls = [
+    'http:~~~~~~~~~~~~test1.html',
+    'http:~~~~~~~~~~~~test2.csv'
+  ]
+  
+  def parse(self, response):
+    print(response.url)
+    print(response.test)

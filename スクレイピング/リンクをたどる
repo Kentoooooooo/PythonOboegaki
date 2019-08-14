@@ -8,3 +8,73 @@
   
 🔵実際のコード
 
+import scrapy                    ← Scrapyをimport
+
+
+class FollowLinksSpider(scrapy.Spider):
+    name = 'follow_links'                      ← 実行時の名前を定義
+    allowed_domains = ['docs.pyq.jp']
+    start_urls = [
+        'https://docs.pyq.jp/_static/assets/scraping/item-list.html'        ← 最初に調べるURL
+    ]
+
+    def parse(self, response):
+        div_item_list = response.css('div.item-list')[0]        ← 初めにitem-listを取得
+        for div_item in div_item_list.css('div.item'):          ← その中のitemを見つける
+            # 商品URLの取得
+            item_url = div_item.css('a.item-name::attr(href)').extract_first()     ← itemの中のitem-nameを見つける
+
+            # 商品URLを個別にスクレイピング
+            yield scrapy.Request(item_url, callback=self.parse_item_page)        ← 見つけたitem_urlに対して、コールバックのparse_item_pageを時刻
+
+    def parse_item_page(self, response):     ← 次にたどるリンクに対して行う処理
+        # 商品ページのHTML解析
+
+        # 商品URLの取得
+        item_url = response.url  ← responseで受け取ったURLを設定する
+
+        # 商品名の取得
+        item_name = response.css('h1.item-name::text').extract_first()       ← 必要な情報を取得する
+        item_name = item_name.strip()                                        ← 改行文字を消す
+
+        # メーカーの取得
+        item_maker = response.css('span.item-maker::text').extract_first()
+        item_maker = item_maker.strip()
+
+        # 価格の取得
+        item_price = response.css('span.item-price::text').extract_first()
+        item_price = item_price.strip()
+
+        # 在庫の取得
+        item_stock = response.css('span.item-stock::text').extract_first()
+        item_stock = item_stock.strip()
+
+        # 発売日の取得
+        item_release_date = response.css('span.item-release-date::text').extract_first()
+        item_release_date = item_release_date.strip()
+
+        # 解析した内容を辞書にする
+        item_info = {                              ← 最後に辞書にするとCSVファイルが書き込まれる
+            'name': item_name,
+            'maker': item_maker,
+            'price': item_price,
+            'stock': item_stock,
+            'release_date': item_release_date,
+            'url': item_url,
+        }
+        return item_info
+
+
+🔵yieldについて
+  yieldは個別にHTTPリクエストを送信する
+  yield.scrapy.Request(item_url, callback=self.parse_item_page)
+  
+  yieldは関数をジェネレータにするために使用する。Scrapyでscrapy.Requestを利用するときは、
+  yieldを使うことが要求される。
+  scrapy.Request商品ページURLとURLのコンテンツをダウンロードしたあとに実行するメソッドを指定する。
+  商品ページのHTMLがダウンロードできると、parse_item_patgeメソッドが実行される。
+  parse_item_pageメソッドは商品ページのHTMLをresponseとして受け取って処理をしている。
+  前の課題と同様に、response.cssメソッドを利用してHTML解析をした後に、辞書データ(item_info)を返している。
+  そのデータが-oオプションで指定されたCSVに保存される。
+  
+  

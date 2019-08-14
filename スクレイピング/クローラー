@@ -1,0 +1,37 @@
+🔵クローラー
+  インターネット上のコンテンツをクローリングするプログラムがクローラー
+  
+🔵Scrapy
+  ここまで
+  ・Requests
+  ・BeautifulSoup  を利用してURLからコンテンツをダウンロードして解析処理を実装
+  
+  ⇒ より簡単に実現できるのがScrapyというクローラのフレームワーク
+  
+🔵Spider
+  ・Spiderクラスのクラス変数の意味と役割
+    name ... クローラーの名前
+    allowed_domains ... クロールの起点となるURL（ドメインがallowed_domainsに含まれている必要がある）
+    
+🔵実際のコード
+  import scrapy                                          ← Scrapyフレームワークをimport
+  
+  class SimpleSpider(scrapy.Spider):                     ← クラスを定義
+  name = 'simple'
+  allowed_domains = ['docs.pyq.jp']
+  start_urls = ['https://docs.pyq.jp/~~~~~~~~~~.html']
+  
+  def parse(self, response):
+    print(response.text)
+    
+🔵RequestsとBeautifulSoupを使った時との比較
+  今までは、Requestsを使ってコンテンツを取得する処理を書いていたが、Scrapyは対象のURLを書くだけで
+  自動的に取得してくれる。
+  
+  またScrapyはBeautifulSoupのようにHTMLを解析する機能もついているので自分でたくさんライブラリを用意せずに始められる。
+  
+  少数のURLだったり、実験的なことをするのであれば、RequestsやBeautifulSoupだけでも十分な場合があるが、大量のページをクロール/解析
+  するときには、Scrapyのようなフレームワークを利用する方が効率的に開発できるといえる。
+  
+  自分の環境でScrapyを利用する場合はpipコマンドでインストールする
+  pip install scrapy

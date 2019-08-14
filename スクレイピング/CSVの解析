@@ -1,0 +1,18 @@
+🔵CSVの解析
+  CSVはHTMLとフォーマットが違うので、csvモジュールを利用する
+  
+import csv
+from ion import StringIO
+
+import requests
+
+# list of height
+height_list = []
+
+# get URL from CSV
+url = 'https://~~~~~~~~~~~~.csv'
+response = requests.get(url)
+response.encoding = response.apparent_encoding
+
+#analyse CSV
+reader

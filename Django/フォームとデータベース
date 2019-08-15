@@ -1,0 +1,52 @@
+🔵フォームを利用する手順
+  フォームを利用する際のView関数の利用手順
+  
+  1．データが送られているか判断（request.methodがPOSTか）し、データがない場合はデータと紐づかないフォームインスタンスを生成し、
+     テンプレートに渡す
+  2．データがある場合は、request.POSTを使ってデータと紐づくフォームインスタンスを作成する
+  3．入力項目をバリデーションする
+  4．データに問題がなければデータを保存する
+  
+  views.py ---------------------------------------------
+    if request.method == 'POST': # (1)
+      form = CommentForm(request.POST) #(2)
+      if form.is_valid(): # (3)
+        form.save() # (4)
+    else:
+      form = CommentForm() # (1)
+      
+🔵メソッド
+  request.methodを参照するとリクエストのHTTPメソッド（GETかPOST）がわかる。
+  POSTでアクセスされた場合にはif request.method == 'POST'内の処理が実行される
+  
+  request.POSTには{'message': ['こんにちは'], 'name': ['次郎']}のような辞書が紐づいているので
+  これを利用してデータと紐づいたフォームインスタンスを生成する。
+        
+        
+🔵バリデーション
+  バリデーションとは、妥当なデータが渡されているか検証すること。
+  今回はモデルフォームなので、モデルクラスで指定されている状態通りかを確認数r
+  
+  form.is_valid()の部分での検証内容
+    Commentモデルの定義を確認する
+    name:models.CharFieldとなっているので文字列が入力されている。文字数はmax_length
+    message:models.CharFieldとなっているので文字列が入力されている。文字数はmax_length
+    
+  未入力でもOKという指定が無い限りは値を入力する必要がある。
+  合格した場合、form.is_valid()はTrueを返し、不合格の場合はFalseを返す。
+  
+  Class Comment(models.Model):
+    name - models.CharField('名前', max_length=50)
+    message = models.CharField('メッセージ', max_length=200)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+🔵データの保存
+  データの保存にはform.save()を利用する。フォームインスタンスに紐づいているデータが新規データの場合は
+  データをデータベースに追加する
+  
+🔵一覧の取得
+  保存後、最新のデータ3件を取得し、コンテキストに渡している。スライス[:3]を付加すると、
+  最新3件までをcommentsに代入する
+  comments = Comment.objects.order_by('-created_at')[:3]
+  
+  

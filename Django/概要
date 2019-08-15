@@ -1,0 +1,36 @@
+🔵Djangoとは
+  Webアプリケーション開発に共通メカニズムを提供し、DRY(Don't Repeat Yourself)の法則に沿って開発する
+  
+  
+🔵View関数  
+  Djangoでアプリケーションを書くときはView関数を作る。
+  Views.pyというファイルに記述。
+  View関数はHTTPリクエストを受け取り、HTTPレスポンスを返す。
+  View関数はあるURLに登録されていて、そのURLにブラウザからアクセスされたときにDjangoサーバーが自動で呼び出される。
+   HTTPリクエストがあったら、View関数が相手に処理を返すイメージ
+ 
+🔵現状の理解
+  なにかしらのプログラムを仮想サーバで実行して、そのプログラムに対してHTTPでアクセスする。
+  
+  ・ブラウザーがトップページにアクセスする ＝＝ WebアプリケーションにHTTPリクエストを送信する
+  ・Djangoが設定とHTTPリクエストを読んで、自動でindex Viwe関数を呼び出す。
+  ・index View関数がHttpResponse（）を返す
+  ・HTTPレスポンスがブラウザーに返される
+  ・ブラウザーが文字列を解析し、表示する
+  
+🔵書いたchord
+・このindex View関数では、HttpResponseオブジェクトを返している
+・HttpResponseにはHttpResponse('文字列')のように文字列を渡すことで、ブラウザーに表示させる文字を指定できる。
+
+from django.http import HttpResponse
+
+
+name = 'ウメ'
+sub_titles = ['美味しいよ！', 'お買い得！', '産地直送！', 'とれたてをお届け！']
+
+
+def index(request):
+    """メイン画面."""
+    return HttpResponse('<h1>野菜販売</h1>')
+
+  

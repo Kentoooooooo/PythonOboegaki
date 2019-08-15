@@ -1,0 +1,58 @@
+🔵View関数の追加
+  views.py
+  
+  from django.template.response import TemplateResponse
+  def product_list(request):
+    return(TemplateResponse(request, 'catalogue/product_lise.html')
+  
+  初めに利用するTemplateResponseをインポート
+  続いて、ユーザから受け取ったHTTPリクエスト(requestのこと）に対する処理を書く
+  ここではリクエストに対してTemplateResponseを利用してproduct_list.htmlのテンプレート
+  を出力してHTTPレスポンスをユーザに返している。
+  
+🔵urls.pyに関数を登録
+
+  urlpatterns = [
+    path('', catalogue.view.product_list, name='product_list'),
+  ]
+  これはパスを通す処理、catalogue/views.pyの中の/index関数ということ。
+  第3引数のnameはよくわからない。とりあえず関数名と同じにしとこう。
+  第1引数が''なのはデフォルトで実行される関数を決めているのかな？
+  
+  ・URLsの書き方
+  DjangoではView関数を登録するときpath()またはre_path()という形で登録する。
+  path('',~~~~~~~~~~~)の場合、各引数の意味は以下のようになる
+    1．''：第一引数は文字列か正規表現。子の文字列か正規表現がマッチする場合にView関数が呼び出される。
+      今回は空の文字列をしているので、トップ画面(http://example.com/など）になる
+    2．catalogue.views.product_list: 呼び出される関数を指定する。
+      今回作ったproduct_list を登録している。
+      単に関数を指定すればよいので、from catalogue.views import product_listとインポートしていれば、単にproduct_listでOK
+    3．name='product_list'：このURLに'product_list'という名前を指定している。
+      今回は必要ないけど、後程「商品一覧画面のリンクを取得したい」というときにこの名前を使って取得する
+  
+  ・path('admin/', ...)とは何か？
+    urls.pyにはもともとadminのパスが書かれている。
+    これは、Djangoの管理画面を表示するための設定らしい。
+    Djangoを使えばデータベースを操作する「管理画面」を簡単に、ほぼ全自動で用意できる。
+    今は深く学ばないけど、このURLの設定は管理画面へのURLを登録するものという理解でOK
+  
+  🔵データベースの情報をとってきてそれを表示する
+  
+  views.py-------------------------------------------------------
+  from catalogue.models import products, category
+  from django.template.response import TemplateResponse
+  
+  def product_list(request):
+    products = Product.objects.order_by('name')
+    return TemplateResponse(request, 'catalogue/product_list.html', 
+                            {
+                            'products': products,
+                            })
+  views.py-------------------------------------------------------
+  html.py-------------------------------------------------------
+  <ul>
+  {% for product in product %}
+  <li>({{ product.catalogue.name }}) {{ product.name }}: {{ product.price }}円</li>
+  {% endfor %}
+  </ul>
+  html.py-------------------------------------------------------

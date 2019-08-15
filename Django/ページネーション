@@ -1,0 +1,50 @@
+🔵ページネーション
+  一覧画面にすべてのデータを表示せずに1画面ごとに5県や20件ずつ表示すること
+  GoogleやAmazonでもよく見かける「前のページ」「次のページ」というリンク
+  
+  Djangoには、Paginatorという機能がある。
+  Paginatorを使って一覧画面を改良しましょう。
+  
+🔵ページネーションの解説について
+  Paginatorを使う
+  Paginatorにはクエリセット「(order_by(...)やfilter(...)など」の結果と、ページごとのアイテム数を渡す。
+  
+  products = Product.objects.order_by('name')
+  paginator = Paginator(products, 5)
+  
+  これで、paginatorオブジェクトができた。
+  paginator.page(ページ番号)を渡すと、1ページ当たりのオブジェクトが取得できる。
+  例えば1ページ目の商品の名前を表示するコードは以下のようになる
+  
+  products = paginator.page(1)
+  for product in products:
+    print(product.name)
+    
+🔵ページの条件をとる
+  products = paginator.page(...)で取得した「1ページ内の一覧」は
+  テンプレート内で利用できる便利なメソッドや属性を持つ
+  
+  ・products.has_next()
+  ・products.next_page_number()
+  ・products.number
+  ・products.has_previous()
+  ・products.previous_page_number
+  
+  paginator.page(1)は内部的にはPageオブジェクトを返している。
+  このPageオブジェクトはfor...inでページ内の商品を返すのでテンプレート内の既存のコードは変える必要がない。
+  
+🔵request.GETとクエリパラメータ
+  ブラウザーではウェブサイトにアクセスするとき、URLの末尾に?ref=fooのような値がついていることがある。
+  これはクエリパラメータといって、URLに併せて追加で渡されれるパラメータ
+  主にGETでWebサーバにアクセスするときに使われる
+  
+  Djangoではrequest.GETからクエリパラメータの値をとれる。
+  たとえばこの http://127.0.0.1:8000/?ref=foo の場合、 request.GET は {'ref': 'foo'} になります。
+  今回は http://127.0.0.1:8000/?page=3 のようにページ番号が指定されるので、 request.GET.get('page') で取得しています
+  （?page クエリーパラメーターがない場合、 KeyError にならないように .get('page', 1) で取っています）
+
+  テンプレート内の <a> タグでは <a href="?page={{ products.next_page_number }}"> のように次のページや前のページへの
+  クエリーパラメーターで遷移させています。 href にクエリーパラメーターだけ渡すと同じURL内でクエリーパラメーターだけ更新されます。
+
+  クエリーパラメーターは & で繋げて複数の値を渡せます ?page=3&ref=foo。
+  

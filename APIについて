@@ -1,0 +1,24 @@
+🔵APIとは別々のプログラム同士が情報をやり取りするモノ
+
+🔵Web APIとスクレイピング
+  APIは、システム（プログラム）がアクセスしやすいように用意されている。
+  だから、一般的にはWebシステムがあって、そのシステムにプログラムからアクセスしたいときは
+  APIを利用する。
+  APIが提供されていない場合は。。。
+  ⇒ スクレイピングをしてデータを取得する。
+  
+🔵実際のコード
+import requests
+import json
+
+
+# APIを呼び出し結果（Response)を受け取ります
+res = requests.get('https://docs.pyq.jp/_static/assets/web_api/json/data/items.json')
+
+# レスポンスの結果をjson形式の文字列として解析します
+items = json.loads(res.text)                     ← 最初からデータだけ入っているからBeautifulSoupによる解析が必要ない
+                                                   ※ Responseオブジェクトのうちのテキストをとってきてる
+
+# 解析した結果（リスト）を出力します
+for item in items:                               ← JSONファイルを取得しているからそのまま辞書として利用できる
+    print(f'{item["name"]}:{item["stock"]}')

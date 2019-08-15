@@ -1,0 +1,22 @@
+🔵HTMLの条件分岐
+  条件によって表示を変更したい場合がある
+  ⇒ {% if 条件 %} {% else %} {% endif %}を利用してif文を書く
+  
+  <ul>
+    {% for vegetable in vegetables %}
+    <li>
+      {{ vegetable.name }}
+      {% if vegetable.sold_out %}
+        Sold Out
+      {% else %}
+        {{ vegetable.price}}円
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  
+🔵やりすぎに注意
+  テンプレートの中でループや分岐を利用できる
+  テンプレートに複雑な処理を書くと、「テストがやりづらい」「処理が読みづらい」などの問題が発生する。
+  ⇒ 複雑な処理が必要な場合は、View関数などに記述できないか、検討をしましょう。
+  

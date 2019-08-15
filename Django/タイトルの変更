@@ -1,0 +1,36 @@
+🔵View関数からテンプレートに値を渡して、動的な画面を表示するようにする
+
+🔵テンプレートを変更する
+  index.htmlの書き換えを行う
+  <title>野菜販売</title>
+  を
+  <title>{{title}}</title>
+  に書き換えて、
+  
+  <h1>野菜販売</h1>
+  を
+  <h1>{{title}}</h1>
+  に書き換える
+  
+🔵View関数の変更
+  def index(request):
+    '''main gamenn'''
+    name = '梅'
+    title = name + 'の野菜販売'
+    return TemplateResponse(request, 'garden/index.html', 
+                            {'tiele': title})
+                            
+🔵解説
+  Djangoでは、ブラウザに表示される見た目、サーバー側の計算を分けるために、テンプレートを利用する
+  テンプレートを利用することにより作業の分業やサーバー側の値を表示することが容易になり、表示項目も確認しやすくなる
+  
+  ・テンプレートに値を渡す方法
+    View関数でTemplateResponseを使う際は、第三引数に辞書を渡すことで、テンプレートに値を渡すことができる
+    return TemplateResponse(request, 'garden/index.html', {'title': title})
+    
+    今回のプログラムでは{'title': 変数}と値を渡している
+    
+  ・テンプレートの内部について
+    テンプレートの内部ではtitleという名前を使うことで、辞書の値に渡した変数(title変数）を表示できる
+    
+  このこのテンプレートに渡される辞書のことを「コンテキスト」と呼ぶ

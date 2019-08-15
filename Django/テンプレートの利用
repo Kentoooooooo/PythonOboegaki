@@ -1,0 +1,36 @@
+🔵テンプレートを利用する
+毎回HTMLをView関数で作成するのは大変。
+⇒ 効率的にHTMLを返すため、Djangoにはテンプレートエンジンが用意されている。
+
+テンプレートをView関数とは別で用意して、変更する必要がある値のみをView関数内で変更し、
+テンプレートと組み合わせて返す。
+
+🔵テンプレートを用意する
+  たぶんコードを見ればなんとなくわかる
+from django.template.response import TemplateResponse
+
+
+name = 'ウメ'
+sub_titles = ['美味しいよ！', 'お買い得！', '産地直送！', 'とれたてをお届け！']
+
+
+def index(request):
+    """メイン画面."""
+    return TemplateResponse(request, 'garden/index.html')
+
+🔵解説
+  Djangoではテンプレートを利用して、View関数で取得した値などを使ってHTMLを動的に変更できる。
+  この問題では単に、テンプレートを利用するだけの処理をView関数に記述した
+  
+  ・TemplateResponseの解説
+   テンプレートを使う場合は、TemplateResponseというクラスを利用する
+   View関数からTemplateResponseを返せば、Djangoは自動でテンプレートからHTMLを作成し、ブラウザなどに返す
+   
+   ・TemplateResponseへの値の渡し方
+    ・第一引数：View関数のある引数にあるrequest  ← 必ず指定する必要がある
+    ・第二引数：テンプレートへのパス
+    
+    テンプレートはmyproject/garden/templates/garden/index.htmlという場所にあるけど
+    TemplateResponseの引数にはgarden/index.htmlと指定するだけで済んだ。
+      ⇒ 理由は、Djangoのアプリケーションの設定で、「myproject/garden/templates/の仕方らテンプレートを探す」
+        ように設定されているから

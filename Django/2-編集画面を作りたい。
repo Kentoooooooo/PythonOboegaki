@@ -1,0 +1,65 @@
+🔵編集画面の仕様
+  /products/1/edit/ のように商品詳細画面のURLに edit/ を付けたURLになる
+  商品名、価格を変更して保存できる
+  保存した後は商品詳細画面に移動する
+  商品詳細画面から「商品の編集画面」に遷移できる
+  
+🔵実装の流れ
+  1．フォームを作る
+  2．編集画面を作る
+  3．編集画面へのView関数を作る
+  4. 編集画面へのリンクを張る
+  5．URLsを登録する。
+  
+  1．フォームを作るところでミスした部分
+    ・forms.ModelFormを継承する
+      class ProductForm(forms.ModelForm):
+    
+    ・モデルフォーム内にメタクラスを定義すること
+      class Meta:
+        model = Product
+        fields = (
+            'name',
+            'price',
+        }
+  2．編集画面を作る部分でミスした部分
+    ※ 全体的に忘れてた
+    ・<form>タグでメソッドをpostに指定すること
+      <form method='post'>
+    ・クロスサイトリクエストフォージェリ
+      {% csrf_token %} これはテンプレートタグなので「{% 」
+    ・送信ボタンの付け忘れ
+      <input type='submit' value='変更'>
+      
+    3. 編集画面へのView関数づくり
+      ※ リバースとかあって未知の世界だった。
+      ・リクエストのメソッドによってif文を分岐させること
+        if request.method == 'POST':
+    
+    4. リンクを張る
+      ※ とくになし
+    
+    5．URLsの登録
+      ※ とくになし
+      
+      
+🔵いろいろと未知だった部分について
+  ・Form（..., instance=...)での編集
+    ModelFormはinstance=という引数を受け取れる
+    instance引数を指定した場合、渡されたオブジェクトの値を変更する。
+    
+    - 画面にフォームを表示するときにinstanceのオブジェクトの値を初期値として表示する
+    - form.save()したときにinstanceオブジェクトの値を変更する（新規作成はしない）
+    
+    instance=変数にproductを指定する以外は、ModelFormを使って新規にモデルオブジェクトを保存する画面を作ったときと
+    ほとんど同じView関数になる。
+    
+🔵他の画面への遷移
+  他の画面への遷移を「リダイレクト」という
+  ⇒ HttpResponseRedirectレスポンスをView関数から返せばできる。
+  
+  return HttpResponseRedirect('/products/1')
+  のコードで指定のURLに移動できる。
+  
+  ただ、これだと移動先の番号がわからない。（/products/何番？/:そもそもproduct_detailが正規表現だからわからない。）
+  ⇒ reverseを使う。reverse('View関数の名前', args=(product.id))のようにすると、正規表現で書かれたView関数に対応した数字をぶち込んでくれる。

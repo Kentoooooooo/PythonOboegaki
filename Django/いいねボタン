@@ -1,0 +1,72 @@
+🔵いいねボタンの実装
+  ・Goodモデルをつくる
+    models.py ---------------------------------
+    class Good(models.Model):  ← Modelの継承
+      created_at = models.DatetimeField(default=timezone.now)
+      
+      class Meta:
+        db_table ='good'  ← たぶんデータベースとの紐づけ
+        verbose_name = verbose_name_plural = 'いいね'
+    
+    ・テンプレートの修正
+      いいねボタンを配置する
+      <h3>”いいね”ボタンを押してください</h3>
+      <form action='/good' method='post'>
+        {% csrf_token %}
+        <input type='submit' name='good' value='いいね'>({{ good_count }}いいね)
+      </form>
+      type: Webページに配置するモノのタイプ
+      action: ボタンとかが押されたときに実行されるプログラム
+      value: ボタンに表示される文字列
+      
+    ・View関数の修正
+      いいねボタンがクリックされた場合の処理を追加する
+      
+      いいねボタン用のView関数goodを定義する
+      Goodにデータを追加する
+      フォームを利用しない場合は、Good.objects.create()とcreateを利用する
+      
+      表示用にredirect('index')とすることでindex関数にリダイレクトしている。
+      
+      views.py -------------------------------------------------------------
+      from django.shortcuts import redirect
+      from garden.models import Good
+      
+      def index(request):
+        ...
+        good_count = Good.objects.count()
+        
+        return TemplateResponse(request, 'garden/index.html',
+                                {'title': title, 
+                                ...
+                                'good_count': good_count,
+                                })
+                                
+                                
+      def good(request):
+        if request.method == 'POST':
+          Good.objects.create()
+        return redirect('index')
+        
+        
+      ・urls.py修正
+        おそらくHTMLテンプレートの action 部分の記述に関わる。
+        <form action='/' ... の場合はView関数のindexが実行されて
+        <form action='/good' ...の場合はView関数のgood関数が実行されている。
+        この時のパスを指定している。
+        urls.py ------------------------------------------
+        from djnago.urls import path
+        
+        from. import views
+        
+        urlpatterns = [
+          path('good', views.good, name='good'),
+          path('', views.index, name='index'),
+        ]
+        
+🔵データの追加
+  モデル経由でデータを追加する場合はモデル名.objects.create(追加要素=値, 追加要素=値, ...)
+  を利用する。
+  
+🔵データの数
+  データの件数を取得するにはcount()を利用する。対象となるデータの件数を取得できる。

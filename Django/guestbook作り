@@ -1,0 +1,121 @@
+🔵どんなモデルが必要か考える
+  何を入力として、何を出力とするか考える。
+  今回の場合は、名前とコメントが入力される。
+  データベースに登録されている名前とコメント、投稿日時が表示される
+  
+  ⇒ クラス（モデル）としてGreetingを作る。
+  メンバは、name, comment, created_at
+  
+🔵model.pyを作る
+  仕様が決まったので、まずはモデルから作る。
+  モデルを作るときには、models.pyを編集する。
+  from django.db import import models  ← djangoのモデルを作るときはインポートする
+  from django.utils.timezone import now
+  
+  class Greeting(models.Model):                                        ← models.Modelを継承
+                                                                         それぞれのメンバを登録する
+    name = models.CharField(verbose_name='名前', max_length=100,
+                            blank=False, null=False)
+    comment = models.TextField(verbose_name='コメント')
+    created_at = models.DatetimeField(verbose_name='投稿日時', default=now)
+    
+    class Meta:
+      db_table = 'greeting'                                               ← DBテーブルの名前を取得している
+      
+🔵forms.pyを作る
+  今回は入力フォームを作る。HTMLに表示する入力フォームを生成するpyファイルを作らなくてはならない。
+  何を表示するのかというとモデルを表示する。なので、モデルをインポートしてから作る
+  
+  ※ このファイルでは、HTMLに載せる入力フォームのオブジェクトを作るイメージ
+  
+  from django import forms                             ← 入力フォームを作るのでformsをインポート
+  from guestbook.models imoprt Greeting                ← Greetingモデルを入力フォームに利用するのでguestbookプロジェクトのmodelsにあるGreeting
+  
+  class GreetingForm(forms.ModelForm):                 ← 入力フォームのためのクラスforms.ModelFormを継承してクラスを作る
+    class Meta:
+      model = Greeting                                 ← ModelFormを継承しているのはわかるけど、どのモデルを利用しているのかわからないのでmodelを指定
+      fields = ('name', 'comment',)                    ← Greetingモデルにあるメンバのうち、どれを入力させるかを指定。
+      
+      
+🔵index.htmlを作る
+  index.htmlはテンプレートを作成するためのファイル
+  このファイルでウェブサイトの位置関係を指定する
+  いじったのは<body>タグの中
+  前半に入力フォーム、後半にデータの表示みたいな構成にする。
+  
+  ・入力フォームについての記述
+    <form action='/' method='post'>
+      {% csrf_token %}
+      <p>書き込みをどうぞ。</p>
+      {{ form.as_p }}
+      <input type='submit' value='送信'>
+     </form>
+     
+     何が書いてあるかというと、<form>タグでここに送信フォームとかの部品を入れられるようにしている。
+     2行目：CSRF攻撃（クロスサイトリクエストフォージェリ、なんか意図しないことをさせる攻撃らしい）への対策
+     書き込みをどうぞ
+     {{ form.as_p }}： これが入力フォーム。「as_p」となっていることによって段落の中に入ってるよってことらしい。
+        後で書くけど、views.pyの中でコンテキストとして渡したformを表示させている。
+    <input type='submit' value='送信'>: これは送信ボタンを作っている。
+        たぶん送信ボタンが押されたらview関数のindex(request)が実行されるんだと思う。
+        
+  後半は読んでいればわかると思うけど、受け取ったgreetingsの要素だけfor文を回しながら同じ内容を展開している。
+  それぞれ名前とか投稿日時とかを表示
+  {{ gt.comment | linebreaks }}はcommentの中に改行文字が含まれていて不都合があるので
+  改行文字がある場合は<p>...</p>で置き換える処理が行われる linebreak を書いている
+    
+🔵views.pyの作成
+  HTMLテンプレートを書いたので、webページの構造ができた。
+  この後は、ユーザがリクエストを出した時に行われる処理を記述しないといけない。
+  ユーザがHTMLリクエストを出すとviews.pyのindexが実行される。
+  この中に、リクエストが出されるたびに行われる処理を記述する。
+  
+  from django.template.response import TemplateResponse
+  
+  from guestbook.forms import GreetingForm
+  from guestbook.models import Greeting
+  
+  def index(request):
+    if request.method == 'POST':
+      form = GreetingForm(request.POST)
+      if form.is_valid():
+        form.save()
+    
+    else:
+      form = GreetingForm()
+    
+    greetings = Greeting.objects.order_by('-created_at')[:5]
+    
+    return TemplateResponse(request,
+                            'guestbook/index.html',
+                            {
+                                'form': form,
+                                'greetings': greetings,
+                            })
+                            
+  このコードの説明。
+  まず初めに、Djangoのテンプレートを利用しているのでインポートしている。
+  続いて、Greetingモデル、GreetingFormモデル両方を利用しているのでインポート
+  
+  index関数の中は毎回行われる処理を記述している。
+  1．データが送られているか判断（request.methodがPOSTか）し、データがない場合はデータと紐づかないインスタンスを生成してテンプレートに渡す
+  2．データがある場合は、request.POSTを使ってデータと紐づくフォームインスタンスを生成する
+  3．入力項目をバリデーションする
+  4．データに問題がなければデータを保存する
+    
+  ・methodについて
+    この属性はどのようにデータを送信するか定義する。HTTPプロトコルではリクエストを実行するための方法をいくつか提供していて
+    一般的なのはGETメソッドとPOSTメソッド。
+  POST形式： フォームのデータを本文として送信する。（一度に大量のデータを送信できる）
+  GET形式：  フォームのデータをURLの末尾に追記して送信する（送信できるデータには限りがある）
+    検索エンジンのフォームでは、GET形式が使われるらしい。
+  
+  greetinggs = Greeting.objects.order_by('-created_at')[:5]
+  models.pyのモデルはデータベースと紐づけされていて、データを取り出すことができる。
+  このモデルからGreetinオブジェクトのデータを取得している。
+  で、この取得したデータをgreetingsに格納している。
+  
+  最後にTemplateResponse(request, 'テンプレートのURL', {コンテキストの辞書})でテンプレートに埋め込みの情報を渡している。
+  
+  
+  

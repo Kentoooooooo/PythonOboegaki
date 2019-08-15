@@ -56,3 +56,35 @@
   {% endfor %}
   </ul>
   html.py-------------------------------------------------------
+
+🔵画面の追加
+  やること
+  ・View関数を書く
+  ・テンプレートを書く
+  ・URLsに登録する
+  
+  ・URLの張り方
+    HTMLテンプレート
+    <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+    URLを張りつつproduct.nameで表示している。
+    
+    HTMLでは<a>タグを使って<a href='/'>のようにリングを指定する。
+    例えばトップ画面へのリンクは<a href='/'商品一覧</a>のように書ける
+    Djangoではテンプレート内で使える{% url ... %}というタグでリンクが取得できる。
+    この中には{% url 'product_list' %}のようにURLsで登録した名前を渡す。
+    
+    URLs
+    path('pdoructs/<int:product_id>/', catalogue.views.product_detail, name='product_detail'),
+    第一引数にマッチするページに対する処理を登録している。<int:product_id>というのは正規表現かな。
+    「products/2みたいなページの要求がされたらproduct_detail関数を呼び出すぜ！」ってことを宣言
+    
+    View関数
+    def product_detail(request, product_id):
+      try:
+        product = Product.objects.get(id=product_id)
+      except Product.DoesNotExist:
+        raise Http404
+      return Template(..........)
+    このView関数は引数としてrequestとproduct_idを受け取る。指定されたページがない場合もあるので
+    存在しないときはERROR404をだす。
+    

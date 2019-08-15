@@ -1,0 +1,87 @@
+🔵入力フォームの作成
+  購入者が野菜への感想を書き込めるようにする。
+  
+  ・フォームを利用する
+    
+    Djangoにはフォームの構築を補助するフォーム機能がある
+    Formクラスは、フォーム中の部品の提供とバリデーション機能を提供する
+    
+    また、ModelFormクラスを利用するとモデルからフォームを構築できる
+    
+  ・モデルフォーム
+    Djangoにはユーザからの入力を受け付けるためのフォームクラスがある。
+    garden/forms.pyにフォームの定義が記述されている
+    
+    今回は、モデルに対応したフォームを利用する。モデルフォームと呼ばれる。
+    form.ModelFormを継承したフォームクラスを作成し、内部のclass Meta:内に対応するモデルを指定する
+    表示したいフィールドを限定したい場合は、fieldsにタプルでフィールド名を渡す。
+    登録日は値が保存時に自動で入力されるので、画面に表示しない。
+    
+  ・forms.pyの中身---------------------------------------------
+    from django import forms             ← Djangoが提供しているforms機能をimport
+    from garden.models import Comment    ← モデルを定義したファイルからコメントモデルをimportする 
+    
+    class CommentForm(forms.ModelForm):  ← importしたformsのforms.ModelFormを継承したフォームクラスを作成
+      class Meta:
+        model = Comment                  ← ここで指定したモデルを利用するらしい。
+        fields = ('name', 'message',)    ← Commentモデルのうち、表示したいものを指定している。
+        
+    ・models.pyの中身---------------------------------------------
+      from django.db import models                             ← モデルの考え方を導入
+      from django.utils import timezone                        ← 作成日を取得
+      
+      class Comment(models.Model):                              ← models.Modelを継承したクラスComment
+        name = models.Charfield('名前', max_length=50)          ← たぶん入力フォームを作っている
+        message = models.CharField('メッセージ', max_length=200)
+        created_at = models.DateTimeField(default=timezone.now) ← 作成日を登録している
+        
+        class Meta:
+          db_table = 'comment'
+          verbose_name = verbose_name_plural = '感想'
+          
+          
+🔵View関数
+  from django.template.response import TemplateResponse               ← テンプレートをつかう
+  
+  from garden.models import Vegetable                                 ← モデルをインポートする
+  from garden.forms import CommentForm                                ← コメントフォームをインポートする
+  
+  def index(request):
+    form = CommentForm()                                              ← インスタンスを作る
+    
+    title = '野菜販売'
+    
+    sub_title = 'おいしいよ'
+    
+    vegetables = Vegetable.objects.filter(producer='ウメ').order_by('price') ← データベースからとってくるもののフィルタリングの処理。
+    
+    return TemplateResponse(request, 'garden/index.html',
+                            {'title': title,
+                            'sub_title': sub_title,
+                            'vegetables': vegetables
+                            'form': form                              ← テンプレート内のformに渡す値をformとして指定してる
+                            })
+                            
+🔵HTMLテンプレート(index.html)
+<form action='/' method='post'>
+  {% csrf_token %}
+  <p>感想をどうぞ</p>
+  {{ form.as_p }}
+<input type='submit' value='送信'>
+</form>
+
+
+DjangoのFormはテンプレート上で使える。{{ form.as_p }}とテンプレートに書くだけでコメント入力用のフォームが画面に表示される
+<form>タグや送信ボタン(<input type='submit'...>)はテンプレートに直接書くらしい
+
+🔵メソッド（method='post'）
+  ブラウザからデータを送信する方法の選択しとして、GETとPOSTがある。
+  一般的に画面表示に関わる情報（ページ番号、URLの付属情報）を送信する場合はGET。
+  データを更新するデータを送信する場合はPOSTを利用する
+  
+  今回は感想をデータベースに書き込みたいのでPOSTを利用する
+  
+🔵CSRF
+  Webにおける攻撃手法の一つであるクロスサイトリクエストフォージェリ（CSRF）対策をDjangoは提供している。
+  <form>タグ内にcsrf_tokenテンプレートタグ（{% csrf_token %}）を記述しておく
+                            

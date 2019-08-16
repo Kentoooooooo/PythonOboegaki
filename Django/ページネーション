@@ -48,3 +48,99 @@
 
   クエリーパラメーターは & で繋げて複数の値を渡せます ?page=3&ref=foo。
   
+  
+🔵ページをまたいで検索条件を引き継ぐ
+  今までは、ページをまたぐと検索条件が消えてしまう。
+  ページ移動時にも検索条件が引き継がれるようにしたい。
+  
+  ページ移動には、<a href='?page=2'>のようにクエリーパラメータを書いたリンクを使っていた。
+  検索条件もクエリーパラメータで渡されるので、この?page=2の後ろに検索条件も付けてページ移動するようにする。
+  
+  ⇒ 「価格が100円以上」という条件なら<a href='?page=2&price_min_100'>次のページ</a>のようになれば良い
+
+product_list.html -----------------------------------------------------------------------------
+<a href="?page={{ products.previous_page_number }}">&lt; 前のページ</a>
+の形のリンクを
+
+<a href="?page={{ products.previous_page_number }}&{{ search_params }}">&lt; 前のページ</a>
+の形式のリンクに書き換える。
+これによって所望の形式のリンクが作れた。
+
+product_list.html -----------------------------------------------------------------------------
+🔵product_list.htmlの解説
+  テンプレートに検索条件search_paramsを渡してページ移動のリンクにつなげている
+  <a href='page={{ products.next_page_number }}&{{ search_params }}'>
+  クエリーパラメータは条件を&でつなぐので、こう書けばページ移動のリンクで検索条件を引き継げる
+    
+views.py --------------------------------------------------------------------------------------
+def product_list(request):
+    products = Product.objects.order_by('name')
+    
+    form = ProductSearchForm(request.GET)
+    if form.is_valid():
+        name = form.cleaned_data.get('name')
+        price_min = form.cleaned_data.get('price_min')
+        price_max = form.cleaned_data.get('price_max')
+        category_id = form.cleaned_data.get('category')
+        if name:
+            products = products.filter(name__contains=name)
+        if price_min:
+            products = products.filter(price__gte=price_min)
+        if price_max:
+            products = products.filter(price__lte=price_max)
+        if category_id:
+            products = products.filter(category_id=category_id)
+    
+    params = request.GET.copy()             ← 追記ここから
+    if 'page' in params:
+        page = params['page']
+        del params['page']
+    else:
+        page = 1
+    search_params = params.urlencode()      ← 追記ここまで
+    
+    paginator = Paginator(products, 5)
+    try:
+        products = paginator.page(page)
+    except (EmptyPage, PageNotAnInteger):
+        products = paginator.page(1)
+
+    return TemplateResponse(request, 'catalogue/product_list.html',
+                            {
+                                'products': products,
+                                'form': form,
+                                'search_params': search_params,
+                            })
+views.py --------------------------------------------------------------------------------------
+🔵views.pyの解説
+  条件を引き継ぐためにproduct_listのView関数内でsearch_paramsという値を作っている。
+  これは「request.GETからpageを除外して'name=みかん&price_min=100'の形式にしたもの」
+  ・実行されている手順
+    1．request.GET.copy() でクエリーパラメータの値をparamsにコピー
+    2．paramasに'page'があれば、page変数に退避して、paramsからは削除
+    3．paramsに'page'がなければ、pageに1を設定
+    4．params.urlencode()を呼び出してname=みかん&price_min=100の形式に変換
+    
+    request.GETは変更できない値なのでparamsにコピーして変更している。
+    
+    2、3、の処理はpageの削除と取得を行っている。これってpop()を使えば行けそうな気がするけど
+    params.pop('page', 1)とすると値がリストで返ってしまうのでdelを利用して削除している。
+    
+🔵request.getとrequest.GETの違い
+  一言でいうと
+  ・request.getはpythonの文法
+  ・request.GETはDjangoの文法
+  
+  ・request.get
+    requestという名前のオブジェクトは辞書型のデータ
+    request = {'key':10, 'animal': 'cat'}
+    request.get('key') # 10
+    
+  ・request.GET
+    こちらはDjangoで使われる
+    requestはHTTPリクエストが送られたときにDjangoが作るオブジェクト。
+    
+    request.GETを実行することで、requestの情報を辞書型のデータで取得することができるようになる。
+    
+    簡単に言うとURLのクエリーパラメータを取得できるみたいな感じかな？
+    今回の問題の場合はpageっていう要素があったら退避してるみたいな。

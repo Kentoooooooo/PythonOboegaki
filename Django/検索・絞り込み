@@ -1,0 +1,165 @@
+🔵検索・絞り込み機能の実装
+  商品一覧画面に検索、条件での絞込機能をつけましょう。
+  これはショッピングサイトでもよくある「最低価格〜円」「最高価格〜円」のような絞込み機能です。
+  ここで学ぶことは他にもブログサイトでの記事検索機能や、勤怠管理システムでの遅刻した人一覧機能などで応用が効きます。
+
+🔵追加する機能
+  今回追加する検索条件は以下の3つです。
+
+  商品名: 入力された文字を含む商品を表示
+  最低価格、最高価格: 価格が入力された数値以上、以下の商品を表示
+  カテゴリー: 選択されたカテゴリーの商品を表示
+  複数の条件で表示できるようにします。
+
+  まず商品の検索に必要な新しいFormを作って、
+  商品一覧画面 product_list View関数に機能を追加しましょう。
+  
+  views.py-----------------------------------------------------------------------
+  from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import Http404
+from django.http import HttpResponseRedirect
+from django.template.response import TemplateResponse
+from django.urls import reverse
+from catalogue.forms import ProductSearchForm, ProductEditForm
+
+from catalogue.forms import ProductEditForm
+from catalogue.models import Product
+
+
+def product_list(request):
+    products = Product.objects.order_by('name')
+    
+    form = ProductSearchForm(request.GET)
+    if form.is_valid():
+        name = form.cleaned_data.get('name')
+        price_min = form.cleaned_data.get('price_min')
+        price_max = form.cleaned_data.get('price_max')
+        category_id = form.cleaned_data.get('category')
+        if name:
+            products = products.filter(name__contains=name)
+        if price_min:
+            products = products.filter(price__gte=price_min)
+        if price_max:
+            products = products.filter(price__lte=price_max)
+        if category_id:
+            products = products.filter(category_id=category_id)
+    
+    page = request.GET.get('page', 1)
+    paginator = Paginator(products, 5)
+    try:
+        products = paginator.page(page)
+    except (EmptyPage, PageNotAnInteger):
+        products = paginator.page(1)
+
+    return TemplateResponse(request, 'catalogue/product_list.html',
+                            {
+                                'products': products,
+                                'form': form,
+                            })
+
+
+def product_detail(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        raise Http404
+    return TemplateResponse(request, 'catalogue/product_detail.html',
+                            {'product': product})
+
+
+def product_edit(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        raise Http404
+
+    if request.method == 'POST':
+        form = ProductEditForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('product_detail',
+                                                args=(product.id,)))
+    else:
+        form = ProductEditForm(instance=product)
+    return TemplateResponse(request, 'catalogue/product_edit.html',
+                            {'form': form, 'product': product})
+
+
+def product_delete(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        raise Http404
+
+    if request.method == 'POST':
+        product.delete()
+        return HttpResponseRedirect(reverse('product_list'))
+    else:
+        return TemplateResponse(request, 'catalogue/product_delete.html',
+                                {'product': product})
+views.py-----------------------------------------------------------------------
+product_list.html-----------------------------------------------------------------------
+{% extends 'catalogue/base.html' %}
+
+{% block title %}商品一覧{% endblock %}
+
+{% block content %}
+<form>
+    {{ form }}
+    <input type='submit' value='検索'>
+</form>
+<hr>
+
+    {% for product in products %}
+      <li>({{ product.category.name }}) <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>: {{ product.price }}円</li>
+    {% endfor %}
+
+    {% if products.has_previous %}
+      <a href="?page={{ products.previous_page_number }}">&lt; 前のページ</a>
+    {% else %}
+      <span>&lt; 前のページ</span>
+    {% endif %}
+
+    {{ products.number }}ページ
+
+    {% if products.has_next %}
+      <a href="?page={{ products.next_page_number }}">次のページ &gt;</a>
+    {% else %}
+      <span>次のページ &gt;</span>
+    {% endif %}
+{% endblock %}
+
+product_list.html-----------------------------------------------------------------------
+
+🔵使用した新しい技
+  ・ModelFormへのフィールドの追加方法
+  ・<form>タグを使った検索画面の作り方
+  ・QuerySetでの詳細な条件設定（ルックアップ）
+  
+🔵ModelFormへのフィールド追加
+  今までModelFormを使うときは、class Meta:にmodel = , fieldsだけ指定していた。
+  これはmodelもでるのフォームを生成してくれるもので、fieldに指定したフィールドを入力できるというもの。
+ 
+  catalogue.forms.ProductSearchForm はそれに加えて以下のフィールドを追加しています。
+  name = forms.CharField(label='商品名', required=False)
+  price_min = forms.IntegerField(label="最低価格", min_value=1, required=False)
+  price_max = forms.IntegerField(label="最高価格", min_value=1, required=False)
+  
+  name は CharField で文字列、 price_min と price_max は IntegerField で数字を受け取ります。
+  それぞれ以下の属性を設定しています。
+  ・label: 入力フィールドの名前
+  ・min_value: 入力の最小の数字を制限
+  ・required=False: 必須入力でない
+  
+  category はMetaの fields に指定しているので、 Product モデルの定義から自動で生成されます。
+  ForeginKey（外部キー)からフォームのフィールドを作ると、Djangoは自動でカテゴリーを選択する入力フォームを作ってくれます。
+  ブラウザーから値が送信されるときは、ブラウザーで指定したカテゴリーのIDがサーバーに渡されます。
+  
+  🔵クエリーパラメータをーをチェックする
+    この ProductSearchForm に request.GET を渡して .is_valid(), .cleaned_data※を使っています。
+    クエリーパラメーター (request.GET) で渡された検索条件をチェックして、正しければ .cleaned_data から取り出しています。
+    ※ Form.cleaned_dataを使うことで、バリデーション済みのフォームの値を辞書形式で取得します。
+    クエリーパラメーターをブラウザーから入力できるように <form> を使っています。
+  
+
+

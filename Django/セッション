@@ -1,0 +1,43 @@
+🔵セッション
+  ・ブラウザーごとにデータを保存する機能
+   ⇒ ログイン情報やカート情報
+   
+🔵カートの中身の管理
+  商品IDのリストをセッションに保存
+  ⇒ 「カートの中身」を管理
+  
+🔵解説
+  Djangoでのセッションは
+  request.sessionにあり、辞書のように利用できる
+  request.session['cart'] # [1, 8]
+  
+  ・cartっていうセッションがあるかないかで条件分岐
+    無い場合 ⇒ 追加された商品が1つ入ったカート([product_id])で初期化
+    ある場合 ⇒ カートにappend、末尾にproduct_idを追加
+    
+🔵Tips
+  cart_add関数は以下のようにもかける
+  .get(...)にデフォルト値を[]にしてif文を省略している
+  def cart_add(request, product_id):
+    cart = request.session.get('cart', [])
+    cart.append(product_id)
+    request.session['cart'] = cart
+    return HttpResponseRedirect(reverse('product_list'))
+    
+🔵存在しないデータを受け取ったときの処理
+  from django.http import Http404                   ← raiseする用の404エラー
+  
+  from catalogue.models import Product              ← データベースに存在している確認するためにProductをimport
+  
+  def cart_add(request, product_id):
+    if not Product.objects.filter(id=product_id).exists() ← exists()メソッドを利用して判定
+      raise Http404
+  .......
+  
+  
+🔵他に作れそうな機能
+  ・追加できる商品数に上限を設ける
+  ・カートに同じ商品を追加できないようにする
+  上限を設けないと商品数が増えるごとにセッションのデータが増える
+  ⇒ データの空き容量を圧迫する攻撃なども考えられるので、実際のサービスを公開するときは上限値を儲けましょう
+  

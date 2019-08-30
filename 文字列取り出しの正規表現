@@ -1,0 +1,17 @@
+HTMLの場合は解析が大変．
+
+
+text = '<html><body>My name is Mike</body></html>'
+import re
+text = re.sub('<.+?>', '', text)              ← HTMLタグの除去
+m = re.match(text, '~My name is (.+)?')       ← 文字列を取り出す正規表現
+name = m.group(1)
+print(name)
+
+
+
+JSONの場合はプログラムでの解釈が簡単
+text = '{'name': 'Mike'}'
+import json
+data = json.loads(text)
+print(data['name'])
